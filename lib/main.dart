@@ -5,18 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
+import './models/ClassifierClass.dart';
 // import 'package:smart_gallery/screens/AlbumPage.dart';
 // import 'package:transparent_image/transparent_image.dart';
 // import 'package:video_player/video_player.dart';
-import './widgets/EachAlbumWidget.dart';
+import 'widgets/HomePage.dart';
 import 'models/AlbumListClass.dart';
+import './models/classifier_quant.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   print("start");
   runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  Classifier classifier = ClassifierQuant();
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -25,11 +29,11 @@ class _MyAppState extends State<MyApp> {
 // class MyApp extends StatelessWidget {
   List<Album>? _albums;
   bool _loading = false;
-
   @override
   void initState() {
     super.initState();
     _loading = true;
+    // await classifier.getModel();
     initAsync();
   }
 
@@ -42,7 +46,14 @@ class _MyAppState extends State<MyApp> {
       print("3");
       _albums = albums;
     }
-    print("4");
+    print("100");
+    await widget.classifier.loadModel();
+    // if (!widget.classifier.isInterpreterActive()) {
+    //   print("101");
+    //   await widget.classifier.loadModel();
+    //   print("102");
+    // }
+    print("103");
     setState(() {
       _loading = false;
     });
@@ -60,7 +71,14 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print("5");
+    print("500");
+
+    // if (widget.classifier.isInterpreterActive()) {
+    //   print("yes");
+    // } else {
+    //   print("NO");
+    // }
+    print("hola");
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AlbumListClass(_albums))
@@ -74,7 +92,7 @@ class _MyAppState extends State<MyApp> {
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : EachAlbumWidget(),
+              : HomePage(widget.classifier),
         ),
       ),
     );

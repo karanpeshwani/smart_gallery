@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../models/ClassifierClass.dart';
 import './ViewerPage.dart';
+
 class AlbumPage extends StatefulWidget {
   final Album album;
-
-  AlbumPage(Album album) : album = album;
+  Classifier classifier;
+  AlbumPage(this.album, this.classifier);
 
   @override
   State<StatefulWidget> createState() => AlbumPageState();
@@ -44,24 +46,36 @@ class AlbumPageState extends State<AlbumPage> {
           crossAxisSpacing: 1.0,
           children: <Widget>[
             ...?_media?.map(
-              (medium) => GestureDetector(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ViewerPage(medium))),
-                child: Container(
-                  color: Colors.grey[300],
-                  child: FadeInImage(
-                    fit: BoxFit.cover,
-                    placeholder: MemoryImage(kTransparentImage),
-                    image: ThumbnailProvider(
-                      mediumId: medium.id,
-                      mediumType: medium.mediumType,
-                      highQuality: true,
-                    ),
-                  ),
-                ),
-              ),
+              (medium) => EachImageWidget(medium, widget.classifier),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class EachImageWidget extends StatelessWidget {
+  const EachImageWidget(this.medium, this.classifier);
+
+  // final AlbumPage widget;
+  final Medium medium;
+  final Classifier classifier;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ViewerPage(medium, classifier))),
+      child: Container(
+        color: Colors.grey[300],
+        child: FadeInImage(
+          fit: BoxFit.cover,
+          placeholder: MemoryImage(kTransparentImage),
+          image: ThumbnailProvider(
+            mediumId: medium.id,
+            mediumType: medium.mediumType,
+            highQuality: true,
+          ),
         ),
       ),
     );
