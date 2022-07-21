@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_gallery_flutter_app/models/classifier_float.dart';
 import './models/ClassifierClass.dart';
 // import 'package:smart_gallery/screens/AlbumPage.dart';
 // import 'package:transparent_image/transparent_image.dart';
@@ -20,7 +21,8 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  Classifier classifier = ClassifierQuant();
+  // Classifier classifier = ClassifierQuant();
+  Classifier classifier = ClassifierFloat();
   @override
   _MyAppState createState() => _MyAppState();
 }
