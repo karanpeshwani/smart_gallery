@@ -1,4 +1,3 @@
-import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
@@ -8,25 +7,23 @@ import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 // import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
 
-class ViewerPage extends StatefulWidget {
+class ClassifiedViewerPage extends StatefulWidget {
   final Medium medium;
-  Classifier classifier;
+  // final String label;
   bool doneOnes = false;
-  String pred = "";
+  // String pred = "";
   var b = Uint8List.fromList([
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
     1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 10, 73, 68, 65,
     84, 120, 156, 99, 0, 1, 0, 0, 5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73,
     69, 78, 68, 174, 66, 96, 130 // prevent dartfmt
   ]);
-  ViewerPage(this.medium, this.classifier);
+  ClassifiedViewerPage({required this.medium});
   @override
-  ViewerPageState createState() => ViewerPageState();
+  _ClassifiedViewerPageState createState() => _ClassifiedViewerPageState();
 }
 
-class ViewerPageState extends State<ViewerPage> {
-  
-  Category? category;
+class _ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
   bool _loading = true;
 
   void getImage() async {
@@ -43,7 +40,7 @@ class ViewerPageState extends State<ViewerPage> {
     });
 
     // here we have to predict the image
-    _predict();
+    // _predict();
     setState(() {
       _loading = false;
     });
@@ -51,6 +48,7 @@ class ViewerPageState extends State<ViewerPage> {
     // _predict();
   }
 
+/*
   void _predict(){
     img.Image imageInput = img.decodeImage(widget.b)!;
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
@@ -65,7 +63,7 @@ class ViewerPageState extends State<ViewerPage> {
     });
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-2222222222222222222");
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     print("c______");
@@ -88,12 +86,11 @@ class ViewerPageState extends State<ViewerPage> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : Column(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.memory(widget.b),
-                  ),
+            : Container(
+                alignment: Alignment.center,
+                child: Image.memory(widget.b),
+              ),
+        /*
                   const SizedBox(
                     height: 36,
                   ),
@@ -110,8 +107,7 @@ class ViewerPageState extends State<ViewerPage> {
                         : '',
                     style: TextStyle(fontSize: 16),
                   ),
-                ],
-              ),
+                  */
       ),
     );
   }
