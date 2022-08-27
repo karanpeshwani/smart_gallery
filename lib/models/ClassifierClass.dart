@@ -122,6 +122,7 @@ abstract class Classifier {
   }
 
   Future<void> loadModel() async {
+/*
     try {
       interpreter =
           await Interpreter.fromAsset(modelName, options: _interpreterOptions);
@@ -139,15 +140,13 @@ abstract class Classifier {
       print('Unable to create interpreter, Caught Exception: ${e.toString()}');
     }
     print("sequence-1");
-/*
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+*/
+
     print("sequence-2");
     FirebaseModelDownloader.instance
         .getModel(
             "mobilenet_v1_10_224",
-            FirebaseModelDownloadType.localModel,
+            FirebaseModelDownloadType.localModelUpdateInBackground,
             FirebaseModelDownloadConditions(
               iosAllowsCellularAccess: true,
               iosAllowsBackgroundDownloading: false,
@@ -185,8 +184,6 @@ abstract class Classifier {
       print("sequence-6");
     });
     print("sequence-7");
-*/
-  
   }
 
   Future<void> loadLabels() async {

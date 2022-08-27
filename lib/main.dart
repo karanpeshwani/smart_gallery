@@ -13,10 +13,15 @@ import './models/ClassifiedAlbumListClass.dart';
 import './models/classifier_quant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './models/SharedPreferencesClass.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   print("start");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -69,11 +74,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     sharedPreferencesClass = SharedPreferencesClass(prefs.getString('savedPredictionsString'));
 
     await widget.classifier.loadModel();
-    // if (!widget.classifier.isInterpreterActive()) {
-    //   print("101");
-    //   await widget.classifier.loadModel();
-    //   print("102");
-    // }
+
     print("103");
     setState(() {
       _loading = false;
