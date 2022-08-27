@@ -1,17 +1,23 @@
 import 'dart:convert';
 import 'dart:collection';
-import '../models/SharedPreferencesClass.dart';
+import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
+
+class Category {
+  String label;
+  double score;
+  Category({required this.label, required this.score});
+}
 
 class SharedPreferencesClass extends ChangeNotifier {
   // final dynamic prefs;\
   final String? savedPredictionsString;
-  HashMap<String, String>? savedPredictions;
+  HashMap<String, Category>? savedPredictions;
 
   SharedPreferencesClass(this.savedPredictionsString) {
     if ((savedPredictionsString == "") || (savedPredictionsString == null)) {
-      savedPredictions = HashMap<String, String>();
+      savedPredictions = HashMap<String, Category>();
     } else {
       savedPredictions = json.decode(savedPredictionsString!);
     }
@@ -37,11 +43,11 @@ class SharedPreferencesClass extends ChangeNotifier {
   }
 */
 
-  void savePediction({required String meduimId, required String prediction}) {
-    savedPredictions!.putIfAbsent(meduimId, () => prediction);
+  void savePediction({required String meduimId, required Category category}) {
+    savedPredictions!.putIfAbsent(meduimId, () => category);
   }
 
-  String? getPrediction({required String meduimId}) {
+  Category? getPrediction({required String meduimId}) {
     if (savedPredictions!.containsKey(meduimId)) {
       return savedPredictions![meduimId];
     }

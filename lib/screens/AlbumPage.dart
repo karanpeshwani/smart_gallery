@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
+import '../models/SharedPreferencesClass.dart';
 import './ViewerPage.dart';
 
 class AlbumPage extends StatefulWidget {
@@ -63,9 +65,11 @@ class EachImageWidget extends StatelessWidget {
   final Classifier classifier;
   @override
   Widget build(BuildContext context) {
+    final sharedPreferencesClass = Provider.of<SharedPreferencesClass>(context, listen: true);
+
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ViewerPage(medium, classifier))),
+          builder: (context) => ViewerPage(medium, classifier, sharedPreferencesClass))),
       child: Container(
         color: Colors.grey[300],
         child: FadeInImage(

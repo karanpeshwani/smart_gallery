@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -40,11 +41,11 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
     // print("length of category 1 is ${_classifiedAlbumList[1].length}");
   }
 
-  Future<String> _predict(
+  Future<Category?> _predict(
       Medium medium, SharedPreferencesClass sharedPreferencesClass) async {
-    String? label = sharedPreferencesClass.getPrediction(meduimId: medium.id);
-    if (label != null) {
-      return label;
+    Category? category = sharedPreferencesClass.getPrediction(meduimId: medium.id);
+    if (category != null) {
+      return category;
     }
 
     var file = await PhotoGallery.getFile(
@@ -56,8 +57,8 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
     var pred = classifier.predict(imageInput);
 
     sharedPreferencesClass.savePediction(
-        meduimId: medium.id, prediction: pred.label);
-    return pred.label;
+        meduimId: medium.id, category: Category(label: pred.label, score: pred.score));
+    return sharedPreferencesClass.getPrediction(meduimId: medium.id);
   }
 
 /*
@@ -79,7 +80,7 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
       // print("length of Fruits category = ${_classifiedAlbumList[1].length}");
       for (var medium in Mediums) {
         // predict and add to respective category
-        String label = await _predict(medium, sharedPreferencesClass);
+        String label = (await _predict(medium, sharedPreferencesClass))!.label;
         print("sending ${label} to ${map2[map1[label]]}");
         _addImageToCategory(medium, map2[map1[label]]);
       }

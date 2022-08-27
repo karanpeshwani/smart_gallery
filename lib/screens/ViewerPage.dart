@@ -1,3 +1,5 @@
+import 'package:smart_gallery_flutter_app/models/SharedPreferencesClass.dart'
+    as spc;
 import 'package:tflite_flutter/tflite_flutter.dart' as tfl;
 import 'dart:typed_data';
 import 'package:image/image.dart' as img;
@@ -12,6 +14,7 @@ class ViewerPage extends StatefulWidget {
   final Medium medium;
   Classifier classifier;
   bool doneOnes = false;
+  spc.SharedPreferencesClass sharedPreferencesClass;
   String pred = "";
   var b = Uint8List.fromList([
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
@@ -19,14 +22,13 @@ class ViewerPage extends StatefulWidget {
     84, 120, 156, 99, 0, 1, 0, 0, 5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73,
     69, 78, 68, 174, 66, 96, 130 // prevent dartfmt
   ]);
-  ViewerPage(this.medium, this.classifier);
+  ViewerPage(this.medium, this.classifier, this.sharedPreferencesClass);
   @override
   ViewerPageState createState() => ViewerPageState();
 }
 
 class ViewerPageState extends State<ViewerPage> {
-  
-  Category? category;
+  late final spc.Category? category;
   bool _loading = true;
 
   void getImage() async {
@@ -51,13 +53,21 @@ class ViewerPageState extends State<ViewerPage> {
     // _predict();
   }
 
-  void _predict(){
+  void _predict() {
+    if (widget.sharedPreferencesClass.savedPredictions!
+        .containsKey(widget.medium.id)) {
+      setState(() {
+        category =
+            widget.sharedPreferencesClass.savedPredictions![widget.medium.id];
+      });
+      return;
+    }
     img.Image imageInput = img.decodeImage(widget.b)!;
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
     final pred = widget.classifier.predict(imageInput);
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-11111111111111");
     setState(() {
-      category = pred;
+      category = spc.Category(label: pred.label, score: pred.score);
       // _loading = false;
     });
     setState(() {
@@ -139,49 +149,48 @@ class ViewerPageState extends State<ViewerPage> {
 
 
 
+/*
+import 'package:flutter/material.dart';
+import 'package:photo_gallery/photo_gallery.dart';
+import 'package:smart_gallery/screens/VideoPlayer.dart';
+import 'package:transparent_image/transparent_image.dart';
 
-// import 'package:flutter/material.dart';
-// import 'package:photo_gallery/photo_gallery.dart';
-// import 'package:smart_gallery/screens/VideoPlayer.dart';
-// import 'package:transparent_image/transparent_image.dart';
+class ViewerPage extends StatelessWidget {
+  final Medium medium;
 
-// class ViewerPage extends StatelessWidget {
-//   final Medium medium;
+  ViewerPage(Medium medium) : medium = medium;
+  // ViewerPage(this.medium);
 
-//   ViewerPage(Medium medium) : medium = medium;
-//   // ViewerPage(this.medium);
+  @override
+  Widget build(BuildContext context) {
 
-//   @override
-//   Widget build(BuildContext context) {
-
-//     DateTime? date = medium.creationDate ?? medium.modifiedDate;
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           leading: IconButton(
-//             onPressed: () => Navigator.of(context).pop(),
-//             icon: Icon(Icons.arrow_back_ios),
-//           ),
-//           title: date != null ? Text(date.toLocal().toString()) : null,
-//         ),
-//         body: Container(
-//           alignment: Alignment.center,
-//           child: medium.mediumType == MediumType.image
-//               ? FadeInImage(
-//                   fit: BoxFit.cover,
-//                   placeholder: MemoryImage(kTransparentImage),
-//                   image: PhotoProvider(mediumId: medium.id), // medium into img
-//                 )
-//               : VideoProvider(
-//                   mediumId: medium.id,
-//                 ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
+    DateTime? date = medium.creationDate ?? medium.modifiedDate;
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+          title: date != null ? Text(date.toLocal().toString()) : null,
+        ),
+        body: Container(
+          alignment: Alignment.center,
+          child: medium.mediumType == MediumType.image
+              ? FadeInImage(
+                  fit: BoxFit.cover,
+                  placeholder: MemoryImage(kTransparentImage),
+                  image: PhotoProvider(mediumId: medium.id), // medium into img
+                )
+              : VideoProvider(
+                  mediumId: medium.id,
+                ),
+        ),
+      ),
+    );
+  }
+}
+*/
 
 
 
