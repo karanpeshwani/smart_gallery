@@ -75,6 +75,10 @@ import 'package:collection/collection.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
+import 'package:firebase_ml_model_downloader/firebase_ml_model_downloader.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../firebase_options.dart';
+
 abstract class Classifier {
   late Interpreter interpreter;
   late InterpreterOptions _interpreterOptions;
@@ -112,10 +116,9 @@ abstract class Classifier {
       _interpreterOptions.threads = numThreads;
     }
 
-    loadModel();
+    // loadModel();
 
     loadLabels();
-
   }
 
   Future<void> loadModel() async {
@@ -135,6 +138,55 @@ abstract class Classifier {
     } catch (e) {
       print('Unable to create interpreter, Caught Exception: ${e.toString()}');
     }
+    print("sequence-1");
+/*
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("sequence-2");
+    FirebaseModelDownloader.instance
+        .getModel(
+            "mobilenet_v1_10_224",
+            FirebaseModelDownloadType.localModel,
+            FirebaseModelDownloadConditions(
+              iosAllowsCellularAccess: true,
+              iosAllowsBackgroundDownloading: false,
+              androidChargingRequired: false,
+              androidWifiRequired: false,
+              androidDeviceIdleRequired: false,
+            ))
+        .then((customModel) {
+      print("sequence-3");
+      // Download complete. Depending on your app, you could enable the ML
+      // feature, or switch from the local model to the remote model, etc.
+
+      // The CustomModel object contains the local path of the model file,
+      // which you can use to instantiate a TensorFlow Lite interpreter.
+      final localModelPath = customModel.file;
+      try {
+        print("sequence-4");
+        interpreter = Interpreter.fromFile(localModelPath);
+        print("sequence-5");
+        // interpreter = await Interpreter.fromAsset(modelName, options: _interpreterOptions);
+        print('Interpreter Created Successfully');
+
+        _inputShape = interpreter.getInputTensor(0).shape;
+        _outputShape = interpreter.getOutputTensor(0).shape;
+        _inputType = interpreter.getInputTensor(0).type;
+        _outputType = interpreter.getOutputTensor(0).type;
+
+        _outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
+        _probabilityProcessor =
+            TensorProcessorBuilder().add(postProcessNormalizeOp).build();
+      } catch (e) {
+        print(
+            'Unable to create interpreter, Caught Exception: ${e.toString()}');
+      }
+      print("sequence-6");
+    });
+    print("sequence-7");
+*/
+  
   }
 
   Future<void> loadLabels() async {

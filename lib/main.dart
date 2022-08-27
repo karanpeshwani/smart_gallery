@@ -7,14 +7,12 @@ import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_gallery_flutter_app/models/classifier_float.dart';
 import './models/ClassifierClass.dart';
-
-// import 'package:smart_gallery/screens/AlbumPage.dart';
-// import 'package:transparent_image/transparent_image.dart';
-// import 'package:video_player/video_player.dart';
-import './widgets/HomePage.dart';
+import 'screens/HomePage.dart';
 import './models/AlbumListClass.dart';
 import './models/ClassifiedAlbumListClass.dart';
 import './models/classifier_quant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import './models/SharedPreferencesClass.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,10 +27,12 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 // class MyApp extends StatelessWidget {
   List<Album>? _albums;
   late AlbumListClass albumListClass;
+  late final SharedPreferencesClass sharedPreferencesClass;
+  late final dynamic prefs;
   // List<List<Medium>>? _classifiedAlbums;
 
   bool _loading = false;
@@ -41,7 +41,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _loading = true;
     // await classifier.getModel();
-    initAsync();    
+    initAsync();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    String updatedSavedPredictionsString =  sharedPreferencesClass.saveUpdatedSharedPreferences();
+    await prefs.setString('savedPredictionsString', updatedSavedPredictionsString);
   }
 
   Future<void> initAsync() async {
@@ -55,6 +61,13 @@ class _MyAppState extends State<MyApp> {
       albumListClass = AlbumListClass(_albums);
     }
     print("100");
+
+    // Load shared preferences
+    // Instance of SharedPreferencesClass class.
+    prefs = await SharedPreferences.getInstance();
+
+    sharedPreferencesClass = SharedPreferencesClass(prefs.getString('savedPredictionsString'));
+
     await widget.classifier.loadModel();
     // if (!widget.classifier.isInterpreterActive()) {
     //   print("101");
@@ -108,19 +121,28 @@ class _MyAppState extends State<MyApp> {
     );
 */
 
-    return Container(
-        child: MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Photo gallery'),
+    return MultiProvider(
+      providers: [
+        // ChangeNotifierProvider(create: (context) => AlbumListClass(_albums)),
+        // ChangeNotifierProvider(create: (context) => ClassifiedAlbumListClass(_classifiedAlbums)),
+        ChangeNotifierProvider(
+            create: (context) =>
+                sharedPreferencesClass),
+      ],
+      child: Container(
+          child: MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Photo gallery'),
+          ),
+          body: _loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : HomePage(widget.classifier, albumListClass),
         ),
-        body: _loading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : HomePage(widget.classifier, albumListClass),
-      ),
-    ));
+      )),
+    );
   }
 }
 

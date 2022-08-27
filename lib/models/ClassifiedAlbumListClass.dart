@@ -6,10 +6,11 @@ import './ClassifierClass.dart';
 import './AlbumListClass.dart';
 import 'package:image/image.dart' as img;
 import 'dart:collection';
+import '../models/SharedPreferencesClass.dart';
 
 class ClassifiedAlbumListClass extends ChangeNotifier {
   // final _classifiedAlbumList = List<List<Medium>>.filled(2, <Medium>[]);
-  final List<List<Medium>> _classifiedAlbumList = List.generate(2 , (i) => []);
+  final List<List<Medium>> _classifiedAlbumList = List.generate(2, (i) => []);
   // List<List<Medium>>? _classifiedAlbumList;
   Classifier classifier;
   AlbumListClass albumListClass;
@@ -39,7 +40,13 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
     // print("length of category 1 is ${_classifiedAlbumList[1].length}");
   }
 
-  Future<String> _predict(Medium medium) async {
+  Future<String> _predict(
+      Medium medium, SharedPreferencesClass sharedPreferencesClass) async {
+    String? label = sharedPreferencesClass.getPrediction(meduimId: medium.id);
+    if (label != null) {
+      return label;
+    }
+
     var file = await PhotoGallery.getFile(
         mediumId: medium.id, mediumType: MediumType.image, mimeType: null);
     Uint8List bytes = await file.readAsBytes();
@@ -47,6 +54,9 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
     img.Image imageInput = img.decodeImage(bytes)!;
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
     var pred = classifier.predict(imageInput);
+
+    sharedPreferencesClass.savePediction(
+        meduimId: medium.id, prediction: pred.label);
     return pred.label;
   }
 
@@ -56,7 +66,8 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
       _media = mediaPage.items;
     });
 */
-  Future<void> makeClassifiedAlbumList() async {
+  Future<void> makeClassifiedAlbumList(
+      SharedPreferencesClass sharedPreferencesClass) async {
     List<Album>? Albums = albumListClass.getAlbumList();
     // int? count = Albums?.length;
     int count = 1;
@@ -68,7 +79,7 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
       // print("length of Fruits category = ${_classifiedAlbumList[1].length}");
       for (var medium in Mediums) {
         // predict and add to respective category
-        String label = await _predict(medium);
+        String label = await _predict(medium, sharedPreferencesClass);
         print("sending ${label} to ${map2[map1[label]]}");
         _addImageToCategory(medium, map2[map1[label]]);
       }

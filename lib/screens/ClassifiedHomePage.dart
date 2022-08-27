@@ -1,5 +1,3 @@
-// import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
@@ -13,13 +11,16 @@ import './ClassifiedHomePage.dart';
 import '../models/ClassifiedAlbumListClass.dart';
 import '../screens/ClassifiedAlbumPage.dart';
 import '../models/ClassifierClass.dart';
+import '../models/SharedPreferencesClass.dart';
+import '../models/SharedPreferencesClass.dart';
 
 class ClassifiedHomePage extends StatefulWidget {
   Classifier classifier;
   AlbumListClass albumListClass;
   late ClassifiedAlbumListClass classifiedAlbumListClass;
+  SharedPreferencesClass sharedPreferencesClass;
 
-  ClassifiedHomePage({required this.classifier, required this.albumListClass}) {
+  ClassifiedHomePage({required this.classifier, required this.albumListClass, required this.sharedPreferencesClass}) {
     classifiedAlbumListClass = ClassifiedAlbumListClass(
         classifier: classifier, albumListClass: albumListClass);
   }
@@ -40,7 +41,7 @@ class _ClassifiedHomePageState extends State<ClassifiedHomePage> {
 
   void initAsync() async {
     print("order check - 0");
-    await widget.classifiedAlbumListClass.makeClassifiedAlbumList();
+    await widget.classifiedAlbumListClass.makeClassifiedAlbumList(widget.sharedPreferencesClass);
     print("order check - 1");
     setState(() {
       _loading = false;
@@ -49,36 +50,7 @@ class _ClassifiedHomePageState extends State<ClassifiedHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // final classifiedAlbumListClass =
-    //     Provider.of<ClassifiedAlbumListClass>(context, listen: true);
-/*
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double gridWidth = (constraints.maxWidth - 20) / 3;
-        double gridHeight = gridWidth + 33;
-        double ratio = gridWidth / gridHeight;
-        return Container(
-          padding: EdgeInsets.all(5),
-          child: _loading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : GridView.count(
-                  childAspectRatio: ratio,
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 5.0,
-                  crossAxisSpacing: 5.0,
-                  children: <Widget>[
-                    ...?widget.classifiedAlbumListClass.getClassifiedAlbumList()?.map(
-                          (classifiedAlbum) => EachClassifiedAlbumWidget(
-                              gridWidth: gridWidth, classifiedAlbum : classifiedAlbum),
-                        ),
-                  ],
-                ),
-        );
-      },
-    );
-    */
+    // final sharedPreferencesClass = Provider.of<SharedPreferencesClass>(context, listen: true);
 
     return MaterialApp(
       home: Scaffold(
@@ -152,13 +124,6 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 placeholder: MemoryImage(kTransparentImage),
                 image: MemoryImage(kTransparentImage),
-                /*
-                image: AlbumThumbnailProvider(
-                  albumId: album.id,
-                  mediumType: album.mediumType,
-                  highQuality: true,
-                ),
-                */
               ),
             ),
           ),

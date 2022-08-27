@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "907286769133",
+    "project_id": "smart-gallery-firebase",
+    "storage_bucket": "smart-gallery-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907286769133:android:78e6e0d0682be0e4ab8be4",
+        "android_client_info": {
+          "package_name": "com.example.smart_gallery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "907286769133-a84o9b9gt01mh6u9tu258q2c2tfolm17.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrF9_lLi6zWiiqmxanpsx3mNhBMYrgaDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "907286769133-a84o9b9gt01mh6u9tu258q2c2tfolm17.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "907286769133-0bon6qjbsl376i403lhloldj8vk944qk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartGallery"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907286769133:android:e6ab2df0b07fb357ab8be4",
+        "android_client_info": {
+          "package_name": "com.example.smart_gallery_flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "907286769133-a84o9b9gt01mh6u9tu258q2c2tfolm17.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrF9_lLi6zWiiqmxanpsx3mNhBMYrgaDo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "907286769133-a84o9b9gt01mh6u9tu258q2c2tfolm17.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "907286769133-0bon6qjbsl376i403lhloldj8vk944qk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartGallery"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

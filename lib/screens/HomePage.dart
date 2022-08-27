@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
 import '../models/AlbumListClass.dart';
-import '../screens/AlbumPage.dart';
-import './EachAlbumWidget.dart';
-import '../screens/ClassifiedAlbumPage.dart';
+import 'AlbumPage.dart';
+import 'ClassifiedAlbumPage.dart';
 import './ClassifiedHomePage.dart';
 import '../models/ClassifiedAlbumListClass.dart';
+import '../models/SharedPreferencesClass.dart';
+
+
 class HomePage extends StatelessWidget {
   // const EachAlbumWidget({Key? key}) : super(key: key);
   Classifier classifier;
@@ -17,6 +19,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sharedPreferencesClass = Provider.of<SharedPreferencesClass>(context, listen: true);
     // final albumListClass = Provider.of<AlbumListClass>(context, listen: true);
     // final classifiedAlbumListClass = Provider.of<ClassifiedAlbumListClass>(context, listen: true);
 
@@ -38,7 +41,7 @@ class HomePage extends StatelessWidget {
                         classifier: classifier, gridWidth: gridWidth, album: album),
                   ),
                   ElevatedButton(onPressed:  () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ClassifiedHomePage(classifier: classifier, albumListClass : albumListClass))) , child: Text("ML")),
+          builder: (context) => ClassifiedHomePage(classifier: classifier, albumListClass : albumListClass, sharedPreferencesClass: sharedPreferencesClass,))) , child: Text("ML")),
             ],
           ),
         );
@@ -60,6 +63,7 @@ class EachAlbumWidget extends StatelessWidget {
   final Album album;
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => AlbumPage(album, classifier))),
