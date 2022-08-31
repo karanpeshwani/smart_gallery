@@ -49,12 +49,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     initAsync();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async{
-    String updatedSavedPredictionsString =  sharedPreferencesClass.saveUpdatedSharedPreferences();
-    await prefs.setString('savedPredictionsString', updatedSavedPredictionsString);
-  }
-
   Future<void> initAsync() async {
     print("1");
     if (await _promptPermissionSetting()) {
@@ -65,7 +59,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _albums = albums;
       albumListClass = AlbumListClass(_albums);
     }
-    print("100");
 
     // Load shared preferences
     // Instance of SharedPreferencesClass class.
@@ -79,6 +72,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     setState(() {
       _loading = false;
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) async{
+    String updatedSavedPredictionsString =  sharedPreferencesClass.saveUpdatedSharedPreferences();
+    await prefs.setString('savedPredictionsString', updatedSavedPredictionsString);
   }
 
   Future<bool> _promptPermissionSetting() async {

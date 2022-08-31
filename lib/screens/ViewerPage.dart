@@ -9,6 +9,7 @@ import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 // import 'package:smart_gallery/screens/VideoPlayer.dart';
 // import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
+import '../constants/Heights.dart';
 
 class ViewerPage extends StatefulWidget {
   final Medium medium;
@@ -95,33 +96,45 @@ class ViewerPageState extends State<ViewerPage> {
           title: date != null ? Text(date.toLocal().toString()) : null,
         ),
         body: _loading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : Column(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.memory(widget.b),
-                  ),
-                  const SizedBox(
-                    height: 36,
-                  ),
-                  Text(
-                    category != null ? category!.label : '',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    category != null
-                        ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
-                        : '',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
+              children: [
+                SizedBox(
+                  height: (MediaQuery.of(context).size.height - 2*appBarHeight - MediaQuery.of(context).padding.top),
+                  child: Column(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          child: Image.memory(widget.b),
+                        ),
+                        const SizedBox(
+                          height: 36,
+                        ),
+                        Text(
+                          category != null ? category!.label : '',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Text(
+                          category != null
+                              ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
+                              : '',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                ),
+                AppBar(
+                  actions: const [
+                    Text("hello"),
+                  ],
+                ),
+              ],
+            ),
       ),
     );
   }

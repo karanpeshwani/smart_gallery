@@ -43,7 +43,8 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
 
   Future<Category?> _predict(
       Medium medium, SharedPreferencesClass sharedPreferencesClass) async {
-    Category? category = sharedPreferencesClass.getPrediction(meduimId: medium.id);
+    Category? category =
+        sharedPreferencesClass.getPrediction(meduimId: medium.id);
     if (category != null) {
       return category;
     }
@@ -57,7 +58,8 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
     var pred = classifier.predict(imageInput);
 
     sharedPreferencesClass.savePediction(
-        meduimId: medium.id, category: Category(label: pred.label, score: pred.score));
+        meduimId: medium.id,
+        category: Category(label: pred.label, score: pred.score));
     return sharedPreferencesClass.getPrediction(meduimId: medium.id);
   }
 
@@ -67,21 +69,27 @@ class ClassifiedAlbumListClass extends ChangeNotifier {
       _media = mediaPage.items;
     });
 */
+
   Future<void> makeClassifiedAlbumList(
       SharedPreferencesClass sharedPreferencesClass) async {
+//  # In case we take all images from all albums except album named "All Items"
     List<Album>? Albums = albumListClass.getAlbumList();
-    // int? count = Albums?.length;
+    int? count = Albums?.length;
+
+/*  # In case we take all images from single album named "All Items" 
+    Album album = albumListClass.getAlbumList()![0];
     int count = 1;
-    for (var i = 0; i < count; i++) {
+*/
+    for (var i = 1; i < count!; i++) {
       Album album = Albums![i];
       MediaPage mediaPage = await album.listMedia();
-      List<Medium> Mediums = mediaPage.items;
+      List<Medium> mediums = mediaPage.items;
       // print("length of animals category = ${_classifiedAlbumList[0].length}");
       // print("length of Fruits category = ${_classifiedAlbumList[1].length}");
-      for (var medium in Mediums) {
+      for (var medium in mediums) {
         // predict and add to respective category
         String label = (await _predict(medium, sharedPreferencesClass))!.label;
-        print("sending ${label} to ${map2[map1[label]]}");
+        print("sending $label to ${map2[map1[label]]}");
         _addImageToCategory(medium, map2[map1[label]]);
       }
       // print(
