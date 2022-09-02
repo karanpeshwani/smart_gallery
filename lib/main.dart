@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
@@ -136,7 +135,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             title: const Text('Photo gallery'),
           ),
           body: _loading
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : HomePage(widget.classifier, albumListClass),

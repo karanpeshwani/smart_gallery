@@ -10,9 +10,7 @@ import './ClassifiedHomePage.dart';
 import '../models/ClassifiedAlbumListClass.dart';
 import '../models/SharedPreferencesClass.dart';
 
-
 class HomePage extends StatelessWidget {
-  // const EachAlbumWidget({Key? key}) : super(key: key);
   Classifier classifier;
   AlbumListClass albumListClass;
   HomePage(this.classifier, this.albumListClass);

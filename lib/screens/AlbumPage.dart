@@ -7,6 +7,8 @@ import '../models/SharedPreferencesClass.dart';
 import './ViewerPage.dart';
 import '../constants/Heights.dart';
 import '../constants/Icons.dart' as icons;
+import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
+import 'dart:io' as io;
 
 class AlbumPage extends StatefulWidget {
   final Album album;
@@ -20,6 +22,13 @@ class AlbumPage extends StatefulWidget {
 class AlbumPageState extends State<AlbumPage> {
   List<Medium>? _media;
   bool selectOn = false;
+  bool _loading = true;
+  bool selectIsOff = true;
+
+  final MultiSelectController<Widget> _controller = MultiSelectController();
+  // final MultiSelectController<String> _controller = MultiSelectController();
+
+  static const lis = [1, 2, 3, 4, 5, 6];
   @override
   void initState() {
     super.initState();
@@ -28,77 +37,229 @@ class AlbumPageState extends State<AlbumPage> {
 
   void initAsync() async {
     MediaPage mediaPage = await widget.album.listMedia();
+    _media = mediaPage.items;
     setState(() {
-      _media = mediaPage.items;
+      _loading = false;
     });
+  }
+
+  deleteSelectedItems() async {
+    // var listOfItemsToBeDeleted =  <io.File>[];
+    for (var element in _controller.getSelectedItems()) {
+      // The deleted id will be returned, if it fails, an empty array will be returned.
+      // Medium mediumToBeDeleted =
+      //     ((element as EachImageWidget).medium);
+      io.File fileToBeDeleted =
+          await ((element as EachImageWidget).medium).getFile();
+
+      try {
+        await fileToBeDeleted
+            .delete()
+            .then((value) => print("deleted successfully"));
+      } catch (e) {
+        print("Error while deleting the image.");
+      }
+      // listOfItemsToBeDeleted.add(mediumToBeDeleted.id);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(icons.backArrow),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          actions: <Widget>[
-            Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-              // margin:  const EdgeInsets.fromLTRB(40, 0, 0, 0),
-              child: const Icon(
-                icons.selectIcon,
-                color: Color.fromARGB(255, 255, 255, 255),
-                size: 25,
-                semanticLabel: 'Text to announce in accessibility modes',
-              ),
-            ),
-          ],
-          title: Text(widget.album.name ?? "Unnamed Album"),
-        ),
-        body: Column(
-          children: [
-            SizedBox(
-              height: (MediaQuery.of(context).size.height -
-                  2 * appBarHeight -
-                  MediaQuery.of(context).padding.top),
-              child: GridView.count(
-                crossAxisCount: 3,
-                mainAxisSpacing: 1.0,
-                crossAxisSpacing: 1.0,
-                children: <Widget>[
-                  ...?_media?.map(
-                    (medium) => EachImageWidget(medium, widget.classifier),
+    return selectIsOff
+        ? MaterialApp(
+            home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(icons.backArrowIcon),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                actions: <Widget>[
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                    // margin:  const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                    // child: const Icon(
+                    //   icons.selectIcon,
+                    //   color: Color.fromARGB(255, 255, 255, 255),
+                    //   size: 25,
+                    //   semanticLabel: 'Text to announce in accessibility modes',
+                    // ),
+                    child: TextButton.icon(
+                      onPressed: () => {
+                        setState(() {
+                          selectIsOff = false;
+                        })
+                      },
+                      icon: const Icon(
+                        icons.selectIcon,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        size: 25,
+                        semanticLabel:
+                            'Text to announce in accessibility modes',
+                      ),
+                      label: Container(),
+                    ),
                   ),
                 ],
+                title: Text(widget.album.name ?? "Unnamed Album"),
               ),
+              body: _loading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : GridView.count(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 1.0,
+                      crossAxisSpacing: 1.0,
+                      children: <Widget>[
+                        ...?_media?.map(
+                          (medium) =>
+                              EachImageWidget(medium, widget.classifier),
+                        ),
+                      ],
+                    ),
             ),
-            AppBar(
-              actions: const [
-                Text("hello"),
-                Icon(
-                  icons.shareIcon,
-                  color: Color.fromARGB(255, 255, 255, 255),
-                  size: 25,
-                  semanticLabel: 'Text to announce in accessibility modes',
+          )
+        : MaterialApp(
+            home: Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(icons.backArrowIcon),
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-              ],
-            ),
-          ],
-        ),
+                actions: <Widget>[
+                  Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                      // margin:  const EdgeInsets.fromLTRB(40, 0, 0, 0),
+                      child: TextButton(
+                        onPressed: () => {
+                          setState(() {
+                            selectIsOff = true;
+                          })
+                        },
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white, fontSize: 17),
+                        ),
+                      )),
+                ],
+                title: Text(widget.album.name ?? "Unnamed Album"),
+              ),
+              body: _loading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Column(
+                      children: [
+                        SizedBox(
+                          height: (MediaQuery.of(context).size.height -
+                              2 * appBarHeight -
+                              MediaQuery.of(context).padding.top),
+                          child: MultiSelectCheckList(
+                            maxSelectableCount: 100,
+                            textStyles: const MultiSelectTextStyles(
+                                selectedTextStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold)),
+                            itemsDecoration: MultiSelectDecorations(
+                                selectedDecoration: BoxDecoration(
+                                    color: Colors.indigo.withOpacity(0.8))),
 
-        // body: GridView.count(
-        //   crossAxisCount: 3,
-        //   mainAxisSpacing: 1.0,
-        //   crossAxisSpacing: 1.0,
-        //   children: <Widget>[
-        //     ...?_media?.map(
-        //       (medium) => EachImageWidget(medium, widget.classifier),
-        //     ),
-        //   ],
-        // ),
-      ),
-    );
+                            listViewSettings: ListViewSettings(
+                                separatorBuilder: (context, index) =>
+                                    const Divider(
+                                      height: 0,
+                                    )),
+
+                            controller: _controller,
+
+                            items: [
+                              ...?_media?.map((medium) => CheckListCard(
+                                    // [...lis.map((e) => CheckListCard(
+                                    // value: EachImageWidget(medium, widget.classifier),
+                                    value: EachImageWidget(
+                                        medium, widget.classifier),
+                                    // title: EachImageWidget(medium, widget.classifier),
+                                    title: EachImageWidget(
+                                        medium, widget.classifier),
+                                    subtitle: const Text("karan"),
+                                    // title: Text(_items[index].title),
+                                    // subtitle: Text(_items[index].subTitle),
+                                    selectedColor: Colors.white,
+                                    checkColor: Colors.indigo,
+                                    // selected: index == 3,
+                                    // enabled: !(index == 5),
+                                    checkBoxBorderSide:
+                                        const BorderSide(color: Colors.blue),
+                                    // shape: RoundedRectangleBorder(
+                                    //     borderRadius: BorderRadius.circular(5))
+                                  )),
+                            ],
+                            /*
+                items: [... lis.map((e) =>  CheckListCard(
+                        // value: EachImageWidget(medium, widget.classifier),
+                        value: Container(
+                          height: 100,
+                          child: Container(
+                            height: 50,
+                            color: Colors.amberAccent,
+                          ),
+                        ),
+                        title: Container(
+                          height: 100,
+                          child: Container(
+                            height: 50,
+                            color: Color.fromARGB(255, 64, 179, 255),
+                          ),
+                        ),
+                        subtitle: Text(e.toString()),
+                        // title: Text(_items[index].title),
+                        // subtitle: Text(_items[index].subTitle),
+                        selectedColor: Colors.white,
+                        checkColor: Colors.indigo,
+                        // selected: index == 3,
+                        // enabled: !(index == 5),
+                        checkBoxBorderSide:
+                            const BorderSide(color: Colors.blue),
+                        // shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(5))
+                      ))],
+                */
+
+                            onChange: (allSelectedItems, selectedItem) {},
+                            //
+                          ),
+                        ),
+                        AppBar(
+                          actions: [
+                            TextButton.icon(
+                              onPressed: () async {
+                                await deleteSelectedItems();
+                                setState(() {
+                                  selectIsOff = true;
+                                });
+                              },
+                              icon: const Icon(
+                                icons.deleteIcon,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                size: 25,
+                                semanticLabel:
+                                    'Text to announce in accessibility modes',
+                              ),
+                              label: Container(),
+                            ),
+                            const Icon(
+                              icons.shareIcon,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                              size: 25,
+                              semanticLabel:
+                                  'Text to announce in accessibility modes',
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+            ),
+          );
   }
 }
 
