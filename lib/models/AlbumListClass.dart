@@ -11,6 +11,15 @@ class AlbumListClass extends ChangeNotifier {
     notifyListeners();
   }
 */
+
+  void updateAlbums() async {
+    print("beginning update");
+    _albums = await PhotoGallery.listAlbums(mediumType: MediumType.image);
+    print("after update");
+    notifyListeners();
+    print("after notifying listeners");
+  }
+
   List<Album>? getAlbumList() {
     return _albums;
   }

@@ -129,7 +129,7 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.topLeft,
-            padding: EdgeInsets.only(left: 2.0),
+            padding: const EdgeInsets.only(left: 2.0),
             child: const Text(
               // album.name ?? "Unnamed Album",
               "Unnamed Album",
@@ -143,11 +143,11 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
           ),
           Container(
             alignment: Alignment.topLeft,
-            padding: EdgeInsets.only(left: 2.0),
+            padding: const EdgeInsets.only(left: 2.0),
             child: Text(
               classifiedAlbum.length.toString(),
               textAlign: TextAlign.start,
-              style: TextStyle(
+              style: const TextStyle(
                 height: 1.2,
                 fontSize: 12,
               ),

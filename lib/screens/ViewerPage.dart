@@ -29,7 +29,7 @@ class ViewerPage extends StatefulWidget {
 }
 
 class ViewerPageState extends State<ViewerPage> {
-  late final spc.Category? category;
+  late spc.Category? category;
   bool _loading = true;
 
   void getImage() async {
@@ -54,27 +54,26 @@ class ViewerPageState extends State<ViewerPage> {
     // _predict();
   }
 
-  void _predict() {
+  spc.Category? _predict() {
     if (widget.sharedPreferencesClass.savedPredictions!
         .containsKey(widget.medium.id)) {
       setState(() {
         category =
             widget.sharedPreferencesClass.savedPredictions![widget.medium.id];
       });
-      return;
+      return category;
     }
     img.Image imageInput = img.decodeImage(widget.b)!;
     print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
     final pred = widget.classifier.predict(imageInput);
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-11111111111111");
-    setState(() {
-      category = spc.Category(label: pred.label, score: pred.score);
-      // _loading = false;
-    });
-    setState(() {
-      _loading = false;
-    });
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-2222222222222222222");
+
+    widget.sharedPreferencesClass.savePediction(
+        meduimId: widget.medium.id,
+        category: spc.Category(label: pred.label, score: pred.score));
+
+    category =
+        widget.sharedPreferencesClass.savedPredictions![widget.medium.id];
+    return category;
   }
 
   @override
@@ -82,6 +81,9 @@ class ViewerPageState extends State<ViewerPage> {
     print("c______");
     print(_loading);
     if (widget.doneOnes == false) {
+      // print(
+      //     "toooooooooooooooo Maaaaaaaaaaaaaaaaaaaaaaaanyyyyyyyyyyyyyyyyyy Times");
+      // print(widget.doneOnes);
       getImage();
     }
     // getImage();
@@ -91,7 +93,7 @@ class ViewerPageState extends State<ViewerPage> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
           ),
           title: date != null ? Text(date.toLocal().toString()) : null,
         ),
@@ -100,10 +102,12 @@ class ViewerPageState extends State<ViewerPage> {
                 child: CircularProgressIndicator(),
               )
             : Column(
-              children: [
-                SizedBox(
-                  height: (MediaQuery.of(context).size.height - 2*appBarHeight - MediaQuery.of(context).padding.top),
-                  child: Column(
+                children: [
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height -
+                        2 * appBarHeight -
+                        MediaQuery.of(context).padding.top),
+                    child: Column(
                       children: [
                         Container(
                           alignment: Alignment.center,
@@ -114,7 +118,8 @@ class ViewerPageState extends State<ViewerPage> {
                         ),
                         Text(
                           category != null ? category!.label : '',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(
                           height: 8,
@@ -123,18 +128,18 @@ class ViewerPageState extends State<ViewerPage> {
                           category != null
                               ? 'Confidence: ${category!.score.toStringAsFixed(3)}'
                               : '',
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ],
                     ),
-                ),
-                AppBar(
-                  actions: const [
-                    Text("hello"),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                  AppBar(
+                    actions: const [
+                      Text("hello"),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }

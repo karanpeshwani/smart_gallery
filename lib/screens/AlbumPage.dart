@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import '../models/AlbumListClass.dart';
 import '../models/ClassifierClass.dart';
 import '../models/SharedPreferencesClass.dart';
 import './ViewerPage.dart';
@@ -11,10 +12,12 @@ import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'dart:io' as io;
 
 class AlbumPage extends StatefulWidget {
-  final Album album;
+  // final Album album;
+  late AlbumListClass albumListClass;
+  final int albumIndex;
   Classifier classifier;
-  AlbumPage(this.album, this.classifier);
-
+  bool doneOnes = false;
+  AlbumPage(this.albumIndex, this.classifier, {Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() => AlbumPageState();
 }
@@ -24,7 +27,6 @@ class AlbumPageState extends State<AlbumPage> {
   bool selectOn = false;
   bool _loading = true;
   bool selectIsOff = true;
-
   final MultiSelectController<Widget> _controller = MultiSelectController();
   // final MultiSelectController<String> _controller = MultiSelectController();
 
@@ -32,13 +34,12 @@ class AlbumPageState extends State<AlbumPage> {
   @override
   void initState() {
     super.initState();
-    initAsync();
   }
 
-  void initAsync() async {
-    MediaPage mediaPage = await widget.album.listMedia();
-    _media = mediaPage.items;
+  void initAsync(Album album) async {
+    MediaPage mediaPage = await album.listMedia();
     setState(() {
+      _media = mediaPage.items;
       _loading = false;
     });
   }
@@ -51,20 +52,43 @@ class AlbumPageState extends State<AlbumPage> {
       //     ((element as EachImageWidget).medium);
       io.File fileToBeDeleted =
           await ((element as EachImageWidget).medium).getFile();
-
+/*
       try {
-        await fileToBeDeleted
-            .delete()
-            .then((value) => print("deleted successfully"));
+        // await fileToBeDeleted
+        //     .delete()
+        //     .then((value) => print("deleted successfully"));
+        // widget.albumListClass.updateAlbums();
+
+        fileToBeDeleted.deleteSync(recursive: false);
+        setState(() {
+          widget.doneOnes = false;
+        });
       } catch (e) {
         print("Error while deleting the image.");
       }
+*/
+      
+      fileToBeDeleted.deleteSync(recursive: true);
+      
+      setState(() {
+        widget.doneOnes = false;
+      });
+
       // listOfItemsToBeDeleted.add(mediumToBeDeleted.id);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final albumListClass = Provider.of<AlbumListClass>(context, listen: true);
+    print("Albumpage build function running.");
+    if (widget.doneOnes == false) {
+      widget.doneOnes = true;
+      albumListClass.updateAlbums();
+      widget.albumListClass = albumListClass;
+      widget.doneOnes = true;
+      initAsync(albumListClass.getAlbumList()!.elementAt(widget.albumIndex));
+    }
     return selectIsOff
         ? MaterialApp(
             home: Scaffold(
@@ -100,7 +124,11 @@ class AlbumPageState extends State<AlbumPage> {
                     ),
                   ),
                 ],
-                title: Text(widget.album.name ?? "Unnamed Album"),
+                title: Text(albumListClass
+                        .getAlbumList()!
+                        .elementAt(widget.albumIndex)
+                        .name ??
+                    "Unnamed Album"),
               ),
               body: _loading
                   ? const Center(
@@ -142,7 +170,11 @@ class AlbumPageState extends State<AlbumPage> {
                         ),
                       )),
                 ],
-                title: Text(widget.album.name ?? "Unnamed Album"),
+                title: Text(albumListClass
+                        .getAlbumList()!
+                        .elementAt(widget.albumIndex)
+                        .name ??
+                    "Unnamed Album"),
               ),
               body: _loading
                   ? const Center(
@@ -264,7 +296,8 @@ class AlbumPageState extends State<AlbumPage> {
 }
 
 class EachImageWidget extends StatelessWidget {
-  const EachImageWidget(this.medium, this.classifier);
+  const EachImageWidget(this.medium, this.classifier, {Key? key})
+      : super(key: key);
 
   // final AlbumPage widget;
   final Medium medium;

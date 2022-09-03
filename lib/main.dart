@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-// import 'package:flutter/rendering.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
@@ -12,29 +11,32 @@ import './models/ClassifiedAlbumListClass.dart';
 import './models/classifier_quant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './models/SharedPreferencesClass.dart';
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   print("start");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(_MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class _MyApp extends StatefulWidget {
   // Classifier classifier = ClassifierQuant();
-  Classifier classifier = ClassifierFloat();
+  final Classifier classifier = ClassifierFloat();
+
+  _MyApp({Key? key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 // class MyApp extends StatelessWidget {
   List<Album>? _albums;
-  late AlbumListClass albumListClass;
+  // late AlbumListClass albumListClass;
   late final SharedPreferencesClass sharedPreferencesClass;
   late final dynamic prefs;
   // List<List<Medium>>? _classifiedAlbums;
@@ -49,21 +51,21 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> initAsync() async {
-    print("1");
     if (await _promptPermissionSetting()) {
       print("2");
       List<Album> albums =
           await PhotoGallery.listAlbums(mediumType: MediumType.image);
       print("3");
       _albums = albums;
-      albumListClass = AlbumListClass(_albums);
+      // albumListClass = AlbumListClass(_albums);
     }
 
     // Load shared preferences
     // Instance of SharedPreferencesClass class.
     prefs = await SharedPreferences.getInstance();
 
-    sharedPreferencesClass = SharedPreferencesClass(prefs.getString('savedPredictionsString'));
+    sharedPreferencesClass =
+        SharedPreferencesClass(prefs.getString('savedPredictionsString'));
 
     await widget.classifier.loadModel();
 
@@ -74,9 +76,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async{
-    String updatedSavedPredictionsString =  sharedPreferencesClass.saveUpdatedSharedPreferences();
-    await prefs.setString('savedPredictionsString', updatedSavedPredictionsString);
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    String updatedSavedPredictionsString =
+        sharedPreferencesClass.saveUpdatedSharedPreferences();
+    await prefs.setString(
+        'savedPredictionsString', updatedSavedPredictionsString);
   }
 
   Future<bool> _promptPermissionSetting() async {
@@ -122,14 +126,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(create: (context) => AlbumListClass(_albums)),
+        ChangeNotifierProvider(create: (context) => AlbumListClass(_albums)),
         // ChangeNotifierProvider(create: (context) => ClassifiedAlbumListClass(_classifiedAlbums)),
-        ChangeNotifierProvider(
-            create: (context) =>
-                sharedPreferencesClass),
+        ChangeNotifierProvider(create: (context) => sharedPreferencesClass),
       ],
-      child: Container(
-          child: MaterialApp(
+      child: MaterialApp(
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Photo gallery'),
@@ -138,9 +139,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : HomePage(widget.classifier, albumListClass),
+              : HomePage(widget.classifier),
         ),
-      )),
+      ),
     );
   }
 }

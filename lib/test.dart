@@ -13,3 +13,10 @@
 //     );
 //   }
 // }
+
+var lis = [1, 2, 3, 4];
+
+int main(List<String> args) {
+  print(lis.length);
+  return 0;
+}
