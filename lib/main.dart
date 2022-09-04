@@ -6,14 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:smart_gallery_flutter_app/models/classifier_float.dart';
 import './models/ClassifierClass.dart';
 import 'screens/HomePage.dart';
-import './models/AlbumListClass.dart';
+import 'models/GalleryClass.dart';
 import './models/ClassifiedAlbumListClass.dart';
 import './models/classifier_quant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './models/SharedPreferencesClass.dart';
-// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,25 +27,22 @@ void main() async {
 class _MyApp extends StatefulWidget {
   // Classifier classifier = ClassifierQuant();
   final Classifier classifier = ClassifierFloat();
-
   _MyApp({Key? key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
-// class MyApp extends StatelessWidget {
-  List<Album>? _albums;
-  // late AlbumListClass albumListClass;
+  // List<AssetPathEntity>? _albums;
+  GalleryClass _galleryClass = GalleryClass();
   late final SharedPreferencesClass sharedPreferencesClass;
   late final dynamic prefs;
   // List<List<Medium>>? _classifiedAlbums;
-
-  bool _loading = false;
+  bool _loading = true;
   @override
   void initState() {
     super.initState();
-    _loading = true;
+    // _loading = true;
     // await classifier.getModel();
     initAsync();
   }
@@ -53,11 +50,11 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
   Future<void> initAsync() async {
     if (await _promptPermissionSetting()) {
       print("2");
-      List<Album> albums =
-          await PhotoGallery.listAlbums(mediumType: MediumType.image);
+
+      await _galleryClass.setUpGallery();
+
       print("3");
-      _albums = albums;
-      // albumListClass = AlbumListClass(_albums);
+      // GalleryClass = GalleryClass(_albums);
     }
 
     // Load shared preferences
@@ -103,11 +100,12 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
     //   print("NO");
     // }
     print("hola");
+  
 /*
     return MultiProvider(
       providers: [
-        // ChangeNotifierProvider(create: (context) => AlbumListClass(_albums)),
-        // ChangeNotifierProvider(create: (context) => ClassifiedAlbumListClass(_classifiedAlbums)),
+        // ChangeNotifierProvider(create: (context) => GalleryClass(_albums)),
+        // ChangeNotifierProvider(create: (context) => ClassifiedGalleryClass(_classifiedAlbums)),
       ],
       child: MaterialApp(
         home: Scaffold(
@@ -126,8 +124,7 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AlbumListClass(_albums)),
-        // ChangeNotifierProvider(create: (context) => ClassifiedAlbumListClass(_classifiedAlbums)),
+        ChangeNotifierProvider(create: (context) => _galleryClass),
         ChangeNotifierProvider(create: (context) => sharedPreferencesClass),
       ],
       child: MaterialApp(

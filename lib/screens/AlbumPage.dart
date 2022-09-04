@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:photo_gallery/photo_gallery.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
-import '../models/AlbumListClass.dart';
+import '../models/GalleryClass.dart';
 import '../models/ClassifierClass.dart';
 import '../models/SharedPreferencesClass.dart';
 import './ViewerPage.dart';
@@ -13,11 +14,12 @@ import 'dart:io' as io;
 
 class AlbumPage extends StatefulWidget {
   // final Album album;
-  late AlbumListClass albumListClass;
+
   final int albumIndex;
   Classifier classifier;
   bool doneOnes = false;
   AlbumPage(this.albumIndex, this.classifier, {Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => AlbumPageState();
 }
@@ -27,14 +29,12 @@ class AlbumPageState extends State<AlbumPage> {
   bool selectOn = false;
   bool _loading = true;
   bool selectIsOff = true;
-  final MultiSelectController<Widget> _controller = MultiSelectController();
-  // final MultiSelectController<String> _controller = MultiSelectController();
+  List<AssetEntity> _album = [];
 
+  final MultiSelectController<AssetEntity> _controller =
+      MultiSelectController();
+  // final MultiSelectController<String> _controller = MultiSelectController();
   static const lis = [1, 2, 3, 4, 5, 6];
-  @override
-  void initState() {
-    super.initState();
-  }
 
   void initAsync(Album album) async {
     MediaPage mediaPage = await album.listMedia();
@@ -44,6 +44,7 @@ class AlbumPageState extends State<AlbumPage> {
     });
   }
 
+/*
   deleteSelectedItems() async {
     // var listOfItemsToBeDeleted =  <io.File>[];
     for (var element in _controller.getSelectedItems()) {
@@ -67,9 +68,9 @@ class AlbumPageState extends State<AlbumPage> {
         print("Error while deleting the image.");
       }
 */
-      
+
       fileToBeDeleted.deleteSync(recursive: true);
-      
+
       setState(() {
         widget.doneOnes = false;
       });
@@ -77,18 +78,18 @@ class AlbumPageState extends State<AlbumPage> {
       // listOfItemsToBeDeleted.add(mediumToBeDeleted.id);
     }
   }
-
+*/
   @override
   Widget build(BuildContext context) {
-    final albumListClass = Provider.of<AlbumListClass>(context, listen: true);
-    print("Albumpage build function running.");
-    if (widget.doneOnes == false) {
-      widget.doneOnes = true;
-      albumListClass.updateAlbums();
-      widget.albumListClass = albumListClass;
-      widget.doneOnes = true;
-      initAsync(albumListClass.getAlbumList()!.elementAt(widget.albumIndex));
-    }
+    final galleryClass = Provider.of<GalleryClass>(context, listen: true);
+    final gallery = galleryClass.getGallery();
+    final album = gallery.elementAt(widget.albumIndex);
+    final albumNameList = galleryClass.getAlbumNameList();
+    // if (widget.doneOnes == false) {
+    //   widget.doneOnes = true;
+    //   widget.albumListClass = albumListClass;
+    //   initAsync(albumListClass.getAlbumList()!.elementAt(widget.albumIndex));
+    // }
     return selectIsOff
         ? MaterialApp(
             home: Scaffold(
@@ -124,25 +125,23 @@ class AlbumPageState extends State<AlbumPage> {
                     ),
                   ),
                 ],
-                title: Text(albumListClass
-                        .getAlbumList()!
-                        .elementAt(widget.albumIndex)
-                        .name ??
-                    "Unnamed Album"),
+                title: Text(albumNameList.elementAt(widget.albumIndex)),
               ),
-              body: _loading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : GridView.count(
+              body: GridView.count(
                       crossAxisCount: 3,
                       mainAxisSpacing: 1.0,
                       crossAxisSpacing: 1.0,
                       children: <Widget>[
-                        ...?_media?.map(
-                          (medium) =>
-                              EachImageWidget(medium, widget.classifier),
-                        ),
+                        // ...?_media?.map(
+                        //   (medium) =>
+                        //       EachImageWidget(widget, widget.classifier),
+                        // ),
+
+                        for (int assetIndex = 0;
+                            assetIndex < album.length;
+                            assetIndex++)
+                          EachImageWidget(
+                              widget.albumIndex, assetIndex, widget.classifier),
                       ],
                     ),
             ),
@@ -170,17 +169,9 @@ class AlbumPageState extends State<AlbumPage> {
                         ),
                       )),
                 ],
-                title: Text(albumListClass
-                        .getAlbumList()!
-                        .elementAt(widget.albumIndex)
-                        .name ??
-                    "Unnamed Album"),
+                title: Text(albumNameList.elementAt(widget.albumIndex)),
               ),
-              body: _loading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Column(
+              body: Column(
                       children: [
                         SizedBox(
                           height: (MediaQuery.of(context).size.height -
@@ -204,8 +195,10 @@ class AlbumPageState extends State<AlbumPage> {
 
                             controller: _controller,
 
+                            /*
                             items: [
-                              ...?_media?.map((medium) => CheckListCard(
+                              ...album.map((medium) =>
+                              CheckListCard(
                                     // [...lis.map((e) => CheckListCard(
                                     // value: EachImageWidget(medium, widget.classifier),
                                     value: EachImageWidget(
@@ -226,6 +219,33 @@ class AlbumPageState extends State<AlbumPage> {
                                     //     borderRadius: BorderRadius.circular(5))
                                   )),
                             ],
+                            */
+
+                            items: [
+                              for (int assetIndex = 0;
+                                  assetIndex < album.length;
+                                  assetIndex++)
+                                CheckListCard(
+                                  // [...lis.map((e) => CheckListCard(
+                                  // value: EachImageWidget(medium, widget.classifier),
+                                  value: album.elementAt(assetIndex),
+                                  // title: EachImageWidget(medium, widget.classifier),
+                                  title: EachImageWidget(widget.albumIndex,
+                                      assetIndex, widget.classifier),
+                                  subtitle: const Text("karan"),
+                                  // title: Text(_items[index].title),
+                                  // subtitle: Text(_items[index].subTitle),
+                                  selectedColor: Colors.white,
+                                  checkColor: Colors.indigo,
+                                  // selected: index == 3,
+                                  // enabled: !(index == 5),
+                                  checkBoxBorderSide:
+                                      const BorderSide(color: Colors.blue),
+                                  // shape: RoundedRectangleBorder(
+                                  //     borderRadius: BorderRadius.circular(5))
+                                )
+                            ],
+
                             /*
                 items: [... lis.map((e) =>  CheckListCard(
                         // value: EachImageWidget(medium, widget.classifier),
@@ -264,12 +284,17 @@ class AlbumPageState extends State<AlbumPage> {
                         AppBar(
                           actions: [
                             TextButton.icon(
-                              onPressed: () async {
-                                await deleteSelectedItems();
-                                setState(() {
-                                  selectIsOff = true;
-                                });
-                              },
+                              // onPressed: () async {
+                              //   await deleteSelectedItems();
+                              //   setState(() {
+                              //     selectIsOff = true;
+                              //   });
+                              // },
+                              onPressed: (() async{      // if we put async here, it will give error
+                                selectIsOff = true;
+                                await galleryClass.deleteAsset(
+                                    _controller.getSelectedItems());
+                              }),
                               icon: const Icon(
                                 icons.deleteIcon,
                                 color: Color.fromARGB(255, 255, 255, 255),
@@ -278,13 +303,6 @@ class AlbumPageState extends State<AlbumPage> {
                                     'Text to announce in accessibility modes',
                               ),
                               label: Container(),
-                            ),
-                            const Icon(
-                              icons.shareIcon,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              size: 25,
-                              semanticLabel:
-                                  'Text to announce in accessibility modes',
                             ),
                           ],
                         ),
@@ -296,31 +314,32 @@ class AlbumPageState extends State<AlbumPage> {
 }
 
 class EachImageWidget extends StatelessWidget {
-  const EachImageWidget(this.medium, this.classifier, {Key? key})
+  const EachImageWidget(this.albumIndex,this.assetIndex, this.classifier, {Key? key})
       : super(key: key);
 
   // final AlbumPage widget;
-  final Medium medium;
+  final int albumIndex;
+  final int assetIndex;
   final Classifier classifier;
   @override
   Widget build(BuildContext context) {
-    final sharedPreferencesClass =
-        Provider.of<SharedPreferencesClass>(context, listen: true);
+    // final sharedPreferencesClass =
+    //     Provider.of<SharedPreferencesClass>(context, listen: true);
+    final galleryClass = Provider.of<GalleryClass>(context, listen: true);
+    final gallery = galleryClass.getGallery();
+    final album = gallery.elementAt(albumIndex);
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-              ViewerPage(medium, classifier, sharedPreferencesClass))),
+      // onTap: () => Navigator.of(context).push(MaterialPageRoute(
+      //     builder: (context) =>
+      //         ViewerPage(medium, classifier, sharedPreferencesClass))),
       child: Container(
         color: Colors.grey[300],
-        child: FadeInImage(
-          fit: BoxFit.cover,
-          placeholder: MemoryImage(kTransparentImage),
-          image: ThumbnailProvider(
-            mediumId: medium.id,
-            mediumType: medium.mediumType,
-            highQuality: true,
-          ),
+        child: AssetEntityImage(
+          album.elementAt(assetIndex),
+          isOriginal: false, // Defaults to `true`.
+          thumbnailSize: const ThumbnailSize.square(200), // Preferred value.
+          thumbnailFormat: ThumbnailFormat.jpeg, // Defaults to `jpeg`.
         ),
       ),
     );
