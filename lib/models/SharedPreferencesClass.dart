@@ -1,8 +1,42 @@
 import 'dart:convert';
 import 'dart:collection';
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:transparent_image/transparent_image.dart';
+
+class ClassifiedAlbum {
+  final String _name;
+  ClassifiedAlbum(this._name);
+  final HashSet<AssetEntity> _assetSet = HashSet();
+  void addAssetIfAbsent(AssetEntity asset) {
+    if (!_assetSet.contains(asset)) {
+      _assetSet.add(asset);
+    }
+  }
+
+  HashSet<AssetEntity> getAssetSet() {
+    return _assetSet;
+  }
+
+  void deleteAssetFromClassifiedAlbum(AssetEntity asset) {
+    _assetSet.remove(asset);
+  }
+
+  String getName() {
+    return _name;
+  }
+
+  AssetEntity getThumbnail() {
+    // if (_assetSet.isEmpty) {
+    //   return null;
+    // }
+    return _assetSet.elementAt(0);
+  }
+
+  int getAssetCount() {
+    return _assetSet.length;
+  }
+}
 
 class Category {
   String label;
@@ -11,53 +45,51 @@ class Category {
 }
 
 class SharedPreferencesClass extends ChangeNotifier {
-  // final dynamic prefs;\
-  final String? savedPredictionsString;
-  HashMap<String, Category>? savedPredictions;
+  String savedPredictionsMapAsString = "";
+  String savedClassifiedAlbumsSetAsString = "";
+  HashMap<String, Category> savedPredictionsMap =
+      HashMap<String, Category>(); // asset.id, category
+  // List<ClassifiedAlbum> savedClassifiedAlbumsList = [];
+  HashMap<String, ClassifiedAlbum> savedClassifiedAlbumsSet = HashMap();
 
-  SharedPreferencesClass(this.savedPredictionsString) {
-    if ((savedPredictionsString == "") || (savedPredictionsString == null)) {
-      savedPredictions = HashMap<String, Category>();
-    } else {
-      savedPredictions = json.decode(savedPredictionsString!);
+  SharedPreferencesClass(
+      this.savedPredictionsMapAsString, this.savedClassifiedAlbumsSetAsString) {
+    if (savedPredictionsMapAsString != null) {
+      savedPredictionsMap = json.decode(savedPredictionsMapAsString);
+    }
+    if (savedClassifiedAlbumsSetAsString != null) {
+      savedClassifiedAlbumsSet = json.decode(savedClassifiedAlbumsSetAsString);
     }
   }
 
-/*
-  SharedPreferencesClass(this.prefs) {
-    String? savedPredictionsString = prefs.getString('savedPredictionsString');
-    if ((savedPredictionsString == "") || (savedPredictionsString == null)) {
-      savedPredictions = HashMap<String, String>();
-    } else {
-      savedPredictions = json.decode(savedPredictionsString);
-    }
-  }
-*/
-
-/*
-  HashMap<String, String>? getSavedPredictions() {
-    if (savedPredictions == null) {
-      return (savedPredictions = HashMap<String, String>());
-    }
-    return savedPredictions;
-  }
-*/
-
-  void savePediction({required String meduimId, required Category category}) {
-    savedPredictions!.putIfAbsent(meduimId, () => category);
+  void savePediction({required String assetID, required Category category}) {
+    savedPredictionsMap.putIfAbsent(assetID, () => category);
   }
 
-  Category? getPrediction({required String meduimId}) {
-    if (savedPredictions!.containsKey(meduimId)) {
-      return savedPredictions![meduimId];
+  Category? getPrediction({required String assetID}) {
+    if (savedPredictionsMap.containsKey(assetID)) {
+      return savedPredictionsMap[assetID];
     }
     return null;
   }
 
-  String saveUpdatedSharedPreferences() {
-    String encodedMap = json.encode(savedPredictions);
-
+  String getUpdatedPredictionsMapAsString() {
+    String encodedMap = json.encode(savedPredictionsMap);
     return encodedMap;
-    // prefs.setString('savedPredictionsString', encodedMap);
+  }
+
+  String getUpdatedClassifiedAlbumsMapAsString() {
+    String encodedList = json.encode(savedClassifiedAlbumsSet);
+    return encodedList;
+  }
+
+  List<ClassifiedAlbum> getClassifiedAlbumList() {
+    List<ClassifiedAlbum> lis = [];
+
+    for (var classifiedAlbum in savedClassifiedAlbumsSet.values) {
+      lis.add(classifiedAlbum);
+    }
+
+    return lis;
   }
 }

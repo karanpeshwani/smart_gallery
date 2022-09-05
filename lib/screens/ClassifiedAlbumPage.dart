@@ -5,8 +5,8 @@ import '../models/ClassifierClass.dart';
 import './ClassifiedViewPage.dart';
 
 class ClassifiedAlbumPage extends StatefulWidget {
-  List<Medium> classifiedAlbum;
-  ClassifiedAlbumPage({required this.classifiedAlbum});
+  final int classifiedAlbumIndex;
+  ClassifiedAlbumPage({required this.classifiedAlbumIndex});
 
   @override
   State<StatefulWidget> createState() => ClassifiedAlbumPageState();

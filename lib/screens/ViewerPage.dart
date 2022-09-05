@@ -55,11 +55,11 @@ class ViewerPageState extends State<ViewerPage> {
   }
 
   spc.Category? _predict() {
-    if (widget.sharedPreferencesClass.savedPredictions!
+    if (widget.sharedPreferencesClass.savedPredictionsMap
         .containsKey(widget.medium.id)) {
       setState(() {
         category =
-            widget.sharedPreferencesClass.savedPredictions![widget.medium.id];
+            widget.sharedPreferencesClass.savedPredictionsMap[widget.medium.id];
       });
       return category;
     }
@@ -68,7 +68,7 @@ class ViewerPageState extends State<ViewerPage> {
     final pred = widget.classifier.predict(imageInput);
 
     widget.sharedPreferencesClass.savePediction(
-        meduimId: widget.medium.id,
+        assetID: ,
         category: spc.Category(label: pred.label, score: pred.score));
 
     category =
@@ -144,71 +144,5 @@ class ViewerPageState extends State<ViewerPage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-//***************************************************//
-
-
-
-
-
-
-
-
-
-
-
-/*
-import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
-import 'package:smart_gallery/screens/VideoPlayer.dart';
-import 'package:transparent_image/transparent_image.dart';
-
-class ViewerPage extends StatelessWidget {
-  final Medium medium;
-
-  ViewerPage(Medium medium) : medium = medium;
-  // ViewerPage(this.medium);
-
-  @override
-  Widget build(BuildContext context) {
-
-    DateTime? date = medium.creationDate ?? medium.modifiedDate;
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back_ios),
-          ),
-          title: date != null ? Text(date.toLocal().toString()) : null,
-        ),
-        body: Container(
-          alignment: Alignment.center,
-          child: medium.mediumType == MediumType.image
-              ? FadeInImage(
-                  fit: BoxFit.cover,
-                  placeholder: MemoryImage(kTransparentImage),
-                  image: PhotoProvider(mediumId: medium.id), // medium into img
-                )
-              : VideoProvider(
-                  mediumId: medium.id,
-                ),
-        ),
-      ),
-    );
-  }
-}
-*/
-
 
 

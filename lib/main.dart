@@ -26,24 +26,20 @@ void main() async {
 
 class _MyApp extends StatefulWidget {
   // Classifier classifier = ClassifierQuant();
-  final Classifier classifier = ClassifierFloat();
   _MyApp({Key? key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
-  // List<AssetPathEntity>? _albums;
   GalleryClass _galleryClass = GalleryClass();
-  late final SharedPreferencesClass sharedPreferencesClass;
-  late final dynamic prefs;
-  // List<List<Medium>>? _classifiedAlbums;
+  late SharedPreferencesClass sharedPreferencesClass;
+  late dynamic prefs;
+  final Classifier classifier = ClassifierFloat();
   bool _loading = true;
   @override
   void initState() {
     super.initState();
-    // _loading = true;
-    // await classifier.getModel();
     initAsync();
   }
 
@@ -51,33 +47,38 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
     if (await _promptPermissionSetting()) {
       print("2");
 
-      await _galleryClass.setUpGallery();
+      await _galleryClass.setUpGallery(); // try removing await
 
-      print("3");
-      // GalleryClass = GalleryClass(_albums);
+      setState(() {
+        _loading = false;
+      });  
+
+      prefs = await SharedPreferences.getInstance();
+      await classifier.loadModel();
+      _galleryClass.setClassifier(classifier);
+      sharedPreferencesClass = SharedPreferencesClass(
+          prefs.getString('saved_predictions_map_as_string'),
+          prefs.getString('saved_classified_albums_set_as_string'));
+
+      _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
+
+      _galleryClass.classifyAllAssets();
     }
 
-    // Load shared preferences
-    // Instance of SharedPreferencesClass class.
-    prefs = await SharedPreferences.getInstance();
-
-    sharedPreferencesClass =
-        SharedPreferencesClass(prefs.getString('savedPredictionsString'));
-
-    await widget.classifier.loadModel();
-
     print("103");
-    setState(() {
-      _loading = false;
-    });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) async {
-    String updatedSavedPredictionsString =
-        sharedPreferencesClass.saveUpdatedSharedPreferences();
+    String updatedPredictionsMapAsString =
+        sharedPreferencesClass.getUpdatedPredictionsMapAsString();
     await prefs.setString(
-        'savedPredictionsString', updatedSavedPredictionsString);
+        'saved_predictions_map_as_string', updatedPredictionsMapAsString);
+
+    String updatedClassifiedAlbumsSetAsString =
+        sharedPreferencesClass.getUpdatedClassifiedAlbumsMapAsString();
+    await prefs.setString('saved_classified_albums_set_as_string',
+        updatedClassifiedAlbumsSetAsString);
   }
 
   Future<bool> _promptPermissionSetting() async {
@@ -92,40 +93,12 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print("500");
-
-    // if (widget.classifier.isInterpreterActive()) {
-    //   print("yes");
-    // } else {
-    //   print("NO");
-    // }
     print("hola");
-  
-/*
-    return MultiProvider(
-      providers: [
-        // ChangeNotifierProvider(create: (context) => GalleryClass(_albums)),
-        // ChangeNotifierProvider(create: (context) => ClassifiedGalleryClass(_classifiedAlbums)),
-      ],
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Photo gallery'),
-          ),
-          body: _loading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : HomePage(widget.classifier),
-        ),
-      ),
-    );
-*/
+
 
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => _galleryClass),
-        ChangeNotifierProvider(create: (context) => sharedPreferencesClass),
       ],
       child: MaterialApp(
         home: Scaffold(
@@ -136,69 +109,9 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : HomePage(widget.classifier),
+              : HomePage(classifier),
         ),
       ),
     );
   }
 }
-
-
-/*
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  List<Album>? _albums;
-  bool _loading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loading = true;
-    initAsync();
-  }
-
-  Future<void> initAsync() async {
-    if (await _promptPermissionSetting()) {
-      List<Album> albums =
-          await PhotoGallery.listAlbums(mediumType: MediumType.image);
-      setState(() {
-        _albums = albums;
-        _loading = false;
-      });
-    }
-    setState(() {
-      _loading = false;
-    });
-  }
-
-  Future<bool> _promptPermissionSetting() async {
-    if (Platform.isIOS &&
-            await Permission.storage.request().isGranted &&
-            await Permission.photos.request().isGranted ||
-        Platform.isAndroid && await Permission.storage.request().isGranted) {
-      return true;
-    }
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Photo gallery example'),
-        ),
-        body: _loading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : EachAlbumWidget(),
-      ),
-    );
-  }
-}
-*/

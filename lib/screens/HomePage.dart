@@ -10,6 +10,7 @@ import 'AlbumPage.dart';
 import 'ClassifiedAlbumPage.dart';
 import './ClassifiedHomePage.dart';
 import '../models/SharedPreferencesClass.dart';
+import './ClassifiedHomePage.dart';
 
 class HomePage extends StatelessWidget {
   final Classifier classifier;
@@ -17,10 +18,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sharedPreferencesClass =
-        Provider.of<SharedPreferencesClass>(context, listen: true);
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
-    // final classifiedAlbumListClass = Provider.of<ClassifiedAlbumListClass>(context, listen: true);
     final List<List<AssetEntity>> _gallery = galleryClass.getGallery();
 
     return LayoutBuilder(
@@ -36,18 +34,6 @@ class HomePage extends StatelessWidget {
             mainAxisSpacing: 5.0,
             crossAxisSpacing: 5.0,
             children: <Widget>[
-              // ...?albumListClass.getAlbumList()?.map(
-              //       (album) => EachAlbumWidget(
-              //           classifier: classifier,
-              //           gridWidth: gridWidth,
-              //           album: album),
-              //     ),
-
-              // ...albumIndexList.map((albumIndex) => EachAlbumWidget(
-              //     classifier: classifier,
-              //     gridWidth: gridWidth,
-              //     albumIndex: albumIndex)),
-
               for (int albumIndex = 0;
                   albumIndex < _gallery.length;
                   albumIndex++)
@@ -55,16 +41,12 @@ class HomePage extends StatelessWidget {
                     classifier: classifier,
                     gridWidth: gridWidth,
                     albumIndex: albumIndex),
-              /*
               ElevatedButton(
                   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ClassifiedHomePage(
                             classifier: classifier,
-                            albumListClass: albumListClass,
-                            sharedPreferencesClass: sharedPreferencesClass,
                           ))),
                   child: const Text("ML")),
-              */
             ],
           ),
         );
@@ -89,7 +71,6 @@ class EachAlbumWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final _gallery = galleryClass.getGallery();
-    // final List<AssetEntity> album = _gallery.elementAt(albumIndex);
     final albumNameList = galleryClass.getAlbumNameList();
     final thumbnailList = galleryClass.getAlbumThumbnails();
 
@@ -105,16 +86,6 @@ class EachAlbumWidget extends StatelessWidget {
                 color: Colors.grey[300],
                 height: gridWidth,
                 width: gridWidth,
-                // child: FadeInImage(
-                //   fit: BoxFit.cover,
-                //   placeholder: MemoryImage(kTransparentImage),
-                //   // image: AlbumThumbnailProvider(
-                //   //   albumId: album.id,
-                //   //   mediumType: album.albumType,
-                //   //   highQuality: true,
-                //   // image: MemoryImage(),
-                // ),
-
                 child: AssetEntityImage(
                   thumbnailList.elementAt(albumIndex),
                   isOriginal: false, // Defaults to `true`.
@@ -141,7 +112,7 @@ class EachAlbumWidget extends StatelessWidget {
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.only(left: 2.0),
               child: Text(
-              _gallery.elementAt(albumIndex).length.toString(),
+                _gallery.elementAt(albumIndex).length.toString(),
                 textAlign: TextAlign.start,
                 style: const TextStyle(
                   height: 1.2,

@@ -44,52 +44,13 @@ class AlbumPageState extends State<AlbumPage> {
     });
   }
 
-/*
-  deleteSelectedItems() async {
-    // var listOfItemsToBeDeleted =  <io.File>[];
-    for (var element in _controller.getSelectedItems()) {
-      // The deleted id will be returned, if it fails, an empty array will be returned.
-      // Medium mediumToBeDeleted =
-      //     ((element as EachImageWidget).medium);
-      io.File fileToBeDeleted =
-          await ((element as EachImageWidget).medium).getFile();
-/*
-      try {
-        // await fileToBeDeleted
-        //     .delete()
-        //     .then((value) => print("deleted successfully"));
-        // widget.albumListClass.updateAlbums();
-
-        fileToBeDeleted.deleteSync(recursive: false);
-        setState(() {
-          widget.doneOnes = false;
-        });
-      } catch (e) {
-        print("Error while deleting the image.");
-      }
-*/
-
-      fileToBeDeleted.deleteSync(recursive: true);
-
-      setState(() {
-        widget.doneOnes = false;
-      });
-
-      // listOfItemsToBeDeleted.add(mediumToBeDeleted.id);
-    }
-  }
-*/
   @override
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final gallery = galleryClass.getGallery();
     final album = gallery.elementAt(widget.albumIndex);
     final albumNameList = galleryClass.getAlbumNameList();
-    // if (widget.doneOnes == false) {
-    //   widget.doneOnes = true;
-    //   widget.albumListClass = albumListClass;
-    //   initAsync(albumListClass.getAlbumList()!.elementAt(widget.albumIndex));
-    // }
+
     return selectIsOff
         ? MaterialApp(
             home: Scaffold(
@@ -101,13 +62,6 @@ class AlbumPageState extends State<AlbumPage> {
                 actions: <Widget>[
                   Container(
                     margin: const EdgeInsets.fromLTRB(0, 0, 30, 0),
-                    // margin:  const EdgeInsets.fromLTRB(40, 0, 0, 0),
-                    // child: const Icon(
-                    //   icons.selectIcon,
-                    //   color: Color.fromARGB(255, 255, 255, 255),
-                    //   size: 25,
-                    //   semanticLabel: 'Text to announce in accessibility modes',
-                    // ),
                     child: TextButton.icon(
                       onPressed: () => {
                         setState(() {
@@ -132,11 +86,6 @@ class AlbumPageState extends State<AlbumPage> {
                       mainAxisSpacing: 1.0,
                       crossAxisSpacing: 1.0,
                       children: <Widget>[
-                        // ...?_media?.map(
-                        //   (medium) =>
-                        //       EachImageWidget(widget, widget.classifier),
-                        // ),
-
                         for (int assetIndex = 0;
                             assetIndex < album.length;
                             assetIndex++)
@@ -195,32 +144,6 @@ class AlbumPageState extends State<AlbumPage> {
 
                             controller: _controller,
 
-                            /*
-                            items: [
-                              ...album.map((medium) =>
-                              CheckListCard(
-                                    // [...lis.map((e) => CheckListCard(
-                                    // value: EachImageWidget(medium, widget.classifier),
-                                    value: EachImageWidget(
-                                        medium, widget.classifier),
-                                    // title: EachImageWidget(medium, widget.classifier),
-                                    title: EachImageWidget(
-                                        medium, widget.classifier),
-                                    subtitle: const Text("karan"),
-                                    // title: Text(_items[index].title),
-                                    // subtitle: Text(_items[index].subTitle),
-                                    selectedColor: Colors.white,
-                                    checkColor: Colors.indigo,
-                                    // selected: index == 3,
-                                    // enabled: !(index == 5),
-                                    checkBoxBorderSide:
-                                        const BorderSide(color: Colors.blue),
-                                    // shape: RoundedRectangleBorder(
-                                    //     borderRadius: BorderRadius.circular(5))
-                                  )),
-                            ],
-                            */
-
                             items: [
                               for (int assetIndex = 0;
                                   assetIndex < album.length;
@@ -246,37 +169,6 @@ class AlbumPageState extends State<AlbumPage> {
                                 )
                             ],
 
-                            /*
-                items: [... lis.map((e) =>  CheckListCard(
-                        // value: EachImageWidget(medium, widget.classifier),
-                        value: Container(
-                          height: 100,
-                          child: Container(
-                            height: 50,
-                            color: Colors.amberAccent,
-                          ),
-                        ),
-                        title: Container(
-                          height: 100,
-                          child: Container(
-                            height: 50,
-                            color: Color.fromARGB(255, 64, 179, 255),
-                          ),
-                        ),
-                        subtitle: Text(e.toString()),
-                        // title: Text(_items[index].title),
-                        // subtitle: Text(_items[index].subTitle),
-                        selectedColor: Colors.white,
-                        checkColor: Colors.indigo,
-                        // selected: index == 3,
-                        // enabled: !(index == 5),
-                        checkBoxBorderSide:
-                            const BorderSide(color: Colors.blue),
-                        // shape: RoundedRectangleBorder(
-                        //     borderRadius: BorderRadius.circular(5))
-                      ))],
-                */
-
                             onChange: (allSelectedItems, selectedItem) {},
                             //
                           ),
@@ -284,16 +176,10 @@ class AlbumPageState extends State<AlbumPage> {
                         AppBar(
                           actions: [
                             TextButton.icon(
-                              // onPressed: () async {
-                              //   await deleteSelectedItems();
-                              //   setState(() {
-                              //     selectIsOff = true;
-                              //   });
-                              // },
                               onPressed: (() async{      // if we put async here, it will give error
                                 selectIsOff = true;
                                 await galleryClass.deleteAsset(
-                                    _controller.getSelectedItems());
+                                    _controller.getSelectedItems(),widget.albumIndex);
                               }),
                               icon: const Icon(
                                 icons.deleteIcon,

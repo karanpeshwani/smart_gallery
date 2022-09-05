@@ -1,7 +1,13 @@
-void main(List<String> args) {
-  List<int> lis = [];
+// import 'dart:collection';
 
-  lis.add(2);
+// int main() {
+//   HashMap<String, int> mp = HashMap();
+//   mp["k"] = 7;
+//   mp["l"] = 8;
 
-  print(lis.elementAt(0));
-}
+//   for (var i = 0; i < mp.length; i++) {
+//     String s = mp.
+//   }
+
+//   return 0;
+// }
