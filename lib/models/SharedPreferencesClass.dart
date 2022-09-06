@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ClassifiedAlbum {
   final String _name;
@@ -45,8 +44,8 @@ class Category {
 }
 
 class SharedPreferencesClass extends ChangeNotifier {
-  String savedPredictionsMapAsString = "";
-  String savedClassifiedAlbumsSetAsString = "";
+  String? savedPredictionsMapAsString = "";
+  String? savedClassifiedAlbumsSetAsString = "";
   HashMap<String, Category> savedPredictionsMap =
       HashMap<String, Category>(); // asset.id, category
   // List<ClassifiedAlbum> savedClassifiedAlbumsList = [];
@@ -55,10 +54,10 @@ class SharedPreferencesClass extends ChangeNotifier {
   SharedPreferencesClass(
       this.savedPredictionsMapAsString, this.savedClassifiedAlbumsSetAsString) {
     if (savedPredictionsMapAsString != null) {
-      savedPredictionsMap = json.decode(savedPredictionsMapAsString);
+      savedPredictionsMap = json.decode(savedPredictionsMapAsString!);
     }
     if (savedClassifiedAlbumsSetAsString != null) {
-      savedClassifiedAlbumsSet = json.decode(savedClassifiedAlbumsSetAsString);
+      savedClassifiedAlbumsSet = json.decode(savedClassifiedAlbumsSetAsString!);
     }
   }
 
@@ -83,13 +82,17 @@ class SharedPreferencesClass extends ChangeNotifier {
     return encodedList;
   }
 
-  List<ClassifiedAlbum> getClassifiedAlbumList() {
-    List<ClassifiedAlbum> lis = [];
+  // List<ClassifiedAlbum> getClassifiedAlbumList() {
+  //   List<ClassifiedAlbum> lis = [];
 
-    for (var classifiedAlbum in savedClassifiedAlbumsSet.values) {
-      lis.add(classifiedAlbum);
-    }
+  //   for (var classifiedAlbum in savedClassifiedAlbumsSet.values) {
+  //     lis.add(classifiedAlbum);
+  //   }
 
-    return lis;
+  //   return lis;
+  // }
+
+  HashMap<String, ClassifiedAlbum> getSavedClassifiedAlbumsSet() {
+    return savedClassifiedAlbumsSet;
   }
 }

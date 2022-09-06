@@ -7,7 +7,6 @@ import 'package:smart_gallery_flutter_app/models/classifier_float.dart';
 import './models/ClassifierClass.dart';
 import 'screens/HomePage.dart';
 import 'models/GalleryClass.dart';
-import './models/ClassifiedAlbumListClass.dart';
 import './models/classifier_quant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './models/SharedPreferencesClass.dart';
@@ -47,25 +46,25 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
     if (await _promptPermissionSetting()) {
       print("2");
 
-      await _galleryClass.setUpGallery(); // try removing await
+      await _galleryClass.setUpGallery();
 
       setState(() {
         _loading = false;
       });  
 
       prefs = await SharedPreferences.getInstance();
+
       await classifier.loadModel();
+
       _galleryClass.setClassifier(classifier);
       sharedPreferencesClass = SharedPreferencesClass(
           prefs.getString('saved_predictions_map_as_string'),
           prefs.getString('saved_classified_albums_set_as_string'));
 
-      _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
+       _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
 
       _galleryClass.classifyAllAssets();
     }
-
-    print("103");
   }
 
   @override

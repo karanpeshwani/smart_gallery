@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import '../models/GalleryClass.dart';
 import '../models/ClassifierClass.dart';
-import '../models/SharedPreferencesClass.dart';
 import './ViewerPage.dart';
 import '../constants/Heights.dart';
 import '../constants/Icons.dart' as icons;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
-import 'dart:io' as io;
 
 class AlbumPage extends StatefulWidget {
-  // final Album album;
 
   final int albumIndex;
   Classifier classifier;
@@ -25,24 +20,11 @@ class AlbumPage extends StatefulWidget {
 }
 
 class AlbumPageState extends State<AlbumPage> {
-  List<Medium>? _media;
   bool selectOn = false;
-  bool _loading = true;
   bool selectIsOff = true;
-  List<AssetEntity> _album = [];
 
   final MultiSelectController<AssetEntity> _controller =
       MultiSelectController();
-  // final MultiSelectController<String> _controller = MultiSelectController();
-  static const lis = [1, 2, 3, 4, 5, 6];
-
-  void initAsync(Album album) async {
-    MediaPage mediaPage = await album.listMedia();
-    setState(() {
-      _media = mediaPage.items;
-      _loading = false;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,23 +131,15 @@ class AlbumPageState extends State<AlbumPage> {
                                   assetIndex < album.length;
                                   assetIndex++)
                                 CheckListCard(
-                                  // [...lis.map((e) => CheckListCard(
-                                  // value: EachImageWidget(medium, widget.classifier),
+
                                   value: album.elementAt(assetIndex),
-                                  // title: EachImageWidget(medium, widget.classifier),
                                   title: EachImageWidget(widget.albumIndex,
                                       assetIndex, widget.classifier),
                                   subtitle: const Text("karan"),
-                                  // title: Text(_items[index].title),
-                                  // subtitle: Text(_items[index].subTitle),
                                   selectedColor: Colors.white,
                                   checkColor: Colors.indigo,
-                                  // selected: index == 3,
-                                  // enabled: !(index == 5),
                                   checkBoxBorderSide:
                                       const BorderSide(color: Colors.blue),
-                                  // shape: RoundedRectangleBorder(
-                                  //     borderRadius: BorderRadius.circular(5))
                                 )
                             ],
 
@@ -209,16 +183,14 @@ class EachImageWidget extends StatelessWidget {
   final Classifier classifier;
   @override
   Widget build(BuildContext context) {
-    // final sharedPreferencesClass =
-    //     Provider.of<SharedPreferencesClass>(context, listen: true);
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final gallery = galleryClass.getGallery();
     final album = gallery.elementAt(albumIndex);
 
     return GestureDetector(
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-      //     builder: (context) =>
-      //         ViewerPage(medium, classifier, sharedPreferencesClass))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) =>
+              ViewerPage(albumIndex: albumIndex,assetIndex: assetIndex))),
       child: Container(
         color: Colors.grey[300],
         child: AssetEntityImage(

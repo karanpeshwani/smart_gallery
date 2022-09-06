@@ -1,94 +1,81 @@
+import 'dart:collection';
 import 'dart:typed_data';
-import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
-import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
-// import 'package:smart_gallery/screens/VideoPlayer.dart';
-// import 'package:transparent_image/transparent_image.dart';
-import '../models/ClassifierClass.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
+import '../models/GalleryClass.dart';
+import 'package:smart_gallery_flutter_app/models/SharedPreferencesClass.dart'
+    as spc;
+
+import '../models/SharedPreferencesClass.dart';
 
 class ClassifiedViewerPage extends StatefulWidget {
-  final Medium medium;
-  // final String label;
-  bool doneOnes = false;
-  // String pred = "";
-  var b = Uint8List.fromList([
-    137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0,
-    1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 10, 73, 68, 65,
-    84, 120, 156, 99, 0, 1, 0, 0, 5, 0, 1, 13, 10, 45, 180, 0, 0, 0, 0, 73,
-    69, 78, 68, 174, 66, 96, 130 // prevent dartfmt
-  ]);
-  ClassifiedViewerPage({required this.medium});
+  final int classifiedAlbumIndex;
+  final int assetIndex;
+
+  Uint8List bytes = Uint8List.fromList([]);
+  ClassifiedViewerPage(
+      {Key? key, required this.classifiedAlbumIndex, required this.assetIndex})
+      : super(key: key);
+
   @override
   _ClassifiedViewerPageState createState() => _ClassifiedViewerPageState();
 }
 
 class _ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
+  spc.Category category = spc.Category(label: "No Label", score: 0);
   bool _loading = true;
 
-  void getImage() async {
-    widget.doneOnes = true;
-    final file = await PhotoGallery.getFile(
-        mediumId: widget.medium.id,
-        mediumType: MediumType.image,
-        mimeType: null);
-    final Uint8List bytes = await file.readAsBytes();
-    print("a______");
-    setState(() {
-      widget.b = bytes;
-      print("b______");
-    });
 
-    // here we have to predict the image
-    // _predict();
+  Future<void> processAsset(
+      AssetEntity asset, GalleryClass galleryClass) async {
+    Uint8List? b = await asset.originBytes;
+    (b != null) ? (widget.bytes = b) : (widget.bytes = Uint8List.fromList([1]));
+
+    spc.Category? predictedCategory = await galleryClass.classifyAsset(asset);
+    if (predictedCategory != null) {
+      category = predictedCategory;
+    }
     setState(() {
       _loading = false;
     });
-
-    // _predict();
   }
 
-/*
-  void _predict(){
-    img.Image imageInput = img.decodeImage(widget.b)!;
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
-    final pred = widget.classifier.predict(imageInput);
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-11111111111111");
-    setState(() {
-      category = pred;
-      // _loading = false;
-    });
-    setState(() {
-      _loading = false;
-    });
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-2222222222222222222");
-  }
-*/
   @override
   Widget build(BuildContext context) {
-    print("c______");
-    print(_loading);
-    if (widget.doneOnes == false) {
-      getImage();
+    final galleryClass = Provider.of<GalleryClass>(context, listen: true);
+    final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
+        galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
+    final ClassifiedAlbum classifiedAlbum =
+        classifiedAlbumSet.values.elementAt(widget.classifiedAlbumIndex);
+    final AssetEntity asset =
+        classifiedAlbum.getAssetSet().elementAt(widget.assetIndex);
+
+    if (widget.bytes.isEmpty) {
+      processAsset(asset, galleryClass);
+      // getCategory(asset, galleryClass);
     }
-    // getImage();
-    DateTime? date = widget.medium.creationDate ?? widget.medium.modifiedDate;
+
+    DateTime date =
+        (asset.createDateTime == DateTime.fromMillisecondsSinceEpoch(0))
+            ? asset.modifiedDateTime
+            : asset.createDateTime;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
           ),
-          title: date != null ? Text(date.toLocal().toString()) : null,
+          title: Text(date.toLocal().toString()),
         ),
         body: _loading
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : Container(
                 alignment: Alignment.center,
-                child: Image.memory(widget.b),
+                child: Image.memory(widget.bytes),
               ),
         /*
                   const SizedBox(
@@ -112,72 +99,3 @@ class _ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-//***************************************************//
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'package:flutter/material.dart';
-// import 'package:photo_gallery/photo_gallery.dart';
-// import 'package:smart_gallery/screens/VideoPlayer.dart';
-// import 'package:transparent_image/transparent_image.dart';
-
-// class ViewerPage extends StatelessWidget {
-//   final Medium medium;
-
-//   ViewerPage(Medium medium) : medium = medium;
-//   // ViewerPage(this.medium);
-
-//   @override
-//   Widget build(BuildContext context) {
-
-//     DateTime? date = medium.creationDate ?? medium.modifiedDate;
-//     return MaterialApp(
-//       home: Scaffold(
-//         appBar: AppBar(
-//           leading: IconButton(
-//             onPressed: () => Navigator.of(context).pop(),
-//             icon: Icon(Icons.arrow_back_ios),
-//           ),
-//           title: date != null ? Text(date.toLocal().toString()) : null,
-//         ),
-//         body: Container(
-//           alignment: Alignment.center,
-//           child: medium.mediumType == MediumType.image
-//               ? FadeInImage(
-//                   fit: BoxFit.cover,
-//                   placeholder: MemoryImage(kTransparentImage),
-//                   image: PhotoProvider(mediumId: medium.id), // medium into img
-//                 )
-//               : VideoProvider(
-//                   mediumId: medium.id,
-//                 ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-
-
-

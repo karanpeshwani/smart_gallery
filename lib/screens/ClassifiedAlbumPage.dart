@@ -1,7 +1,9 @@
+import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
-import 'package:transparent_image/transparent_image.dart';
-import '../models/ClassifierClass.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
+import '../models/GalleryClass.dart';
+import '../models/SharedPreferencesClass.dart';
 import './ClassifiedViewPage.dart';
 
 class ClassifiedAlbumPage extends StatefulWidget {
@@ -13,16 +15,20 @@ class ClassifiedAlbumPage extends StatefulWidget {
 }
 
 class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
-  // List<Medium>? _media;
-  bool _loading = true;
 
   @override
   Widget build(BuildContext context) {
+    final galleryClass = Provider.of<GalleryClass>(context, listen: true);
+    final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
+        galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
+    final ClassifiedAlbum classifiedAlbum =
+        classifiedAlbumSet.values.elementAt(widget.classifiedAlbumIndex);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
+            icon: const Icon(Icons.arrow_back_ios),
             onPressed: () => Navigator.of(context).pop(),
           ),
           // title: Text(widget.classifiedAlbum.name ?? "Unnamed Album"),
@@ -33,9 +39,12 @@ class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
           mainAxisSpacing: 1.0,
           crossAxisSpacing: 1.0,
           children: <Widget>[
-            ...widget.classifiedAlbum.map(
-              (medium) => EachClassifiedImageWidget(medium: medium),
-            ),
+            for (int assetIndex = 0;
+                assetIndex < classifiedAlbum.getAssetSet().length;
+                assetIndex++)
+              EachClassifiedImageWidget(
+                  classifiedAlbumIndex: widget.classifiedAlbumIndex,
+                  assetIndex: assetIndex)
           ],
         ),
       ),
@@ -44,25 +53,35 @@ class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
 }
 
 class EachClassifiedImageWidget extends StatelessWidget {
-  const EachClassifiedImageWidget({required this.medium});
+  const EachClassifiedImageWidget(
+      {Key? key, required this.classifiedAlbumIndex, required this.assetIndex})
+      : super(key: key);
 
   // final AlbumPage widget;
-  final Medium medium;
+  final int assetIndex;
+  final int classifiedAlbumIndex;
   @override
   Widget build(BuildContext context) {
+    final galleryClass = Provider.of<GalleryClass>(context, listen: true);
+    final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
+        galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
+    final ClassifiedAlbum classifiedAlbum =
+        classifiedAlbumSet.values.elementAt(classifiedAlbumIndex);
+    final AssetEntity asset =
+        classifiedAlbum.getAssetSet().elementAt(assetIndex);
+
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => ClassifiedViewerPage(medium: medium))),
+          builder: (context) => ClassifiedViewerPage(
+              classifiedAlbumIndex: classifiedAlbumIndex,
+              assetIndex: assetIndex))),
       child: Container(
         color: Colors.grey[300],
-        child: FadeInImage(
-          fit: BoxFit.cover,
-          placeholder: MemoryImage(kTransparentImage),
-          image: ThumbnailProvider(
-            mediumId: medium.id,
-            mediumType: medium.mediumType,
-            highQuality: true,
-          ),
+        child: AssetEntityImage(
+          asset,
+          isOriginal: false, // Defaults to `true`.
+          thumbnailSize: const ThumbnailSize.square(200), // Preferred value.
+          thumbnailFormat: ThumbnailFormat.jpeg, // Defaults to `jpeg`.
         ),
       ),
     );

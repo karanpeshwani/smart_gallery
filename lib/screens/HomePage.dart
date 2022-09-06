@@ -1,15 +1,9 @@
-// import 'dart:html';
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
 import '../models/GalleryClass.dart';
 import 'AlbumPage.dart';
-import 'ClassifiedAlbumPage.dart';
-import './ClassifiedHomePage.dart';
-import '../models/SharedPreferencesClass.dart';
 import './ClassifiedHomePage.dart';
 
 class HomePage extends StatelessWidget {

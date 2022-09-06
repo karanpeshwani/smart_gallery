@@ -1,12 +1,20 @@
 // import 'dart:collection';
 
 // int main() {
-//   HashMap<String, int> mp = HashMap();
-//   mp["k"] = 7;
-//   mp["l"] = 8;
+//   HashSet<String> hs = HashSet();
+//   hs.add("karan");
+//   hs.add("diya");
+//   hs.add("anil");
 
-//   for (var i = 0; i < mp.length; i++) {
-//     String s = mp.
+//   HashMap<String, int> hm = HashMap();
+//   hm.putIfAbsent("karan", () => 7);
+//   hm.putIfAbsent("Anil", () => 77);
+
+//   for (var i = 0; i < hs.length; i++) {
+//     print(hs.elementAt(i));
+//   }
+//   for (var i = 0; i < hm.length; i++) {
+//     print(hm.keys.elementAt(index))
 //   }
 
 //   return 0;

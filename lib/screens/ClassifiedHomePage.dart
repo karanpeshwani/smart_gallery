@@ -1,18 +1,10 @@
 import 'dart:collection';
-
 import 'package:flutter/material.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import '../models/ClassifierClass.dart';
 import '../models/GalleryClass.dart';
-import '../screens/AlbumPage.dart';
 import '../screens/ClassifiedAlbumPage.dart';
-import './ClassifiedHomePage.dart';
-import '../models/ClassifiedAlbumListClass.dart';
-import '../screens/ClassifiedAlbumPage.dart';
-import '../models/ClassifierClass.dart';
 import '../models/SharedPreferencesClass.dart';
 
 class ClassifiedHomePage extends StatefulWidget {
@@ -32,8 +24,8 @@ class _ClassifiedHomePageState extends State<ClassifiedHomePage> {
   Widget build(BuildContext context) {
     // final sharedPreferencesClass = Provider.of<SharedPreferencesClass>(context, listen: true);
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
-    final List<ClassifiedAlbum> classifiedAlbumList =
-        galleryClass.sharedPreferencesClass.getClassifiedAlbumList();
+    final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
+        galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
 
     return MaterialApp(
       home: Scaffold(
@@ -53,19 +45,19 @@ class _ClassifiedHomePageState extends State<ClassifiedHomePage> {
               return Container(
                 padding: const EdgeInsets.all(5),
                 child: GridView.count(
-                        childAspectRatio: ratio,
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 5.0,
-                        crossAxisSpacing: 5.0,
-                        children: <Widget>[
-                          for (var classifiedAlbumIndex = 0;
-                              classifiedAlbumIndex < classifiedAlbumList.length;
-                              classifiedAlbumIndex++)
-                            EachClassifiedAlbumWidget(
-                                gridWidth: gridWidth,
-                                classifiedAlbumIndex: classifiedAlbumIndex)
-                        ],
-                      ),
+                  childAspectRatio: ratio,
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 5.0,
+                  crossAxisSpacing: 5.0,
+                  children: <Widget>[
+                    for (var classifiedAlbumIndex = 0;
+                        classifiedAlbumIndex < classifiedAlbumSet.length;
+                        classifiedAlbumIndex++)
+                      EachClassifiedAlbumWidget(
+                          gridWidth: gridWidth,
+                          classifiedAlbumIndex: classifiedAlbumIndex)
+                  ],
+                ),
               );
             },
           )),
@@ -77,26 +69,26 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
   final double gridWidth;
   final int classifiedAlbumIndex;
 
-  EachClassifiedAlbumWidget({
+  EachClassifiedAlbumWidget({Key? key, 
     required this.gridWidth,
     required this.classifiedAlbumIndex,
-  }) {
+  }) : super(key: key) {
     print("order check - 2");
   }
 
   @override
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
-    final List<ClassifiedAlbum> classifiedAlbumList =
-        galleryClass.sharedPreferencesClass.getClassifiedAlbumList();
-    final ClassifiedAlbum classifiedAlbum = classifiedAlbumList.elementAt(classifiedAlbumIndex);
-    final AssetEntity thumbnailAsset =
-        classifiedAlbum.getThumbnail();
+    final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
+        galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
+    final ClassifiedAlbum classifiedAlbum =
+        classifiedAlbumSet.values.elementAt(classifiedAlbumIndex);
+    final AssetEntity thumbnailAsset = classifiedAlbum.getThumbnail();
 
     return GestureDetector(
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-      //     builder: (context) =>
-      //         ClassifiedAlbumPage(classifiedAlbumIndex: classifiedAlbumIndex))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) =>
+              ClassifiedAlbumPage(classifiedAlbumIndex: classifiedAlbumIndex))),
       child: Column(
         children: <Widget>[
           ClipRRect(
@@ -118,7 +110,7 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.only(left: 2.0),
             child: Text(
-              classifiedAlbum.getName(), 
+              classifiedAlbum.getName(),
               // "Unnamed Album",
               maxLines: 1,
               textAlign: TextAlign.start,

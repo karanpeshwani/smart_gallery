@@ -143,47 +143,40 @@ abstract class Classifier {
 */
 
     print("sequence-2");
-    FirebaseModelDownloader.instance
-        .getModel(
-            "mobilenet_v1_10_224",
-            FirebaseModelDownloadType.localModelUpdateInBackground,
-            FirebaseModelDownloadConditions(
-              iosAllowsCellularAccess: true,
-              iosAllowsBackgroundDownloading: false,
-              androidChargingRequired: false,
-              androidWifiRequired: false,
-              androidDeviceIdleRequired: false,
-            ))
-        .then((customModel) {
-      print("sequence-3");
-      // Download complete. Depending on your app, you could enable the ML
-      // feature, or switch from the local model to the remote model, etc.
+    FirebaseCustomModel customModel = await FirebaseModelDownloader.instance.getModel(
+        "mobilenet_v1_10_224",
+        FirebaseModelDownloadType.localModelUpdateInBackground,
+        FirebaseModelDownloadConditions(
+          iosAllowsCellularAccess: true,
+          iosAllowsBackgroundDownloading: false,
+          androidChargingRequired: false,
+          androidWifiRequired: false,
+          androidDeviceIdleRequired: false,
+        ));
+    // Download complete. Depending on your app, you could enable the ML
+    // feature, or switch from the local model to the remote model, etc.
 
-      // The CustomModel object contains the local path of the model file,
-      // which you can use to instantiate a TensorFlow Lite interpreter.
-      final localModelPath = customModel.file;
-      try {
-        print("sequence-4");
-        interpreter = Interpreter.fromFile(localModelPath);
-        print("sequence-5");
-        // interpreter = await Interpreter.fromAsset(modelName, options: _interpreterOptions);
-        print('Interpreter Created Successfully');
+    // The CustomModel object contains the local path of the model file,
+    // which you can use to instantiate a TensorFlow Lite interpreter.
+    final localModelPath = customModel.file;
+    try {
+      print("sequence-4");
+      interpreter = Interpreter.fromFile(localModelPath);
+      print("sequence-5");
+      // interpreter = await Interpreter.fromAsset(modelName, options: _interpreterOptions);
+      print('Interpreter Created Successfully');
 
-        _inputShape = interpreter.getInputTensor(0).shape;
-        _outputShape = interpreter.getOutputTensor(0).shape;
-        _inputType = interpreter.getInputTensor(0).type;
-        _outputType = interpreter.getOutputTensor(0).type;
+      _inputShape = interpreter.getInputTensor(0).shape;
+      _outputShape = interpreter.getOutputTensor(0).shape;
+      _inputType = interpreter.getInputTensor(0).type;
+      _outputType = interpreter.getOutputTensor(0).type;
 
-        _outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
-        _probabilityProcessor =
-            TensorProcessorBuilder().add(postProcessNormalizeOp).build();
-      } catch (e) {
-        print(
-            'Unable to create interpreter, Caught Exception: ${e.toString()}');
-      }
-      print("sequence-6");
-    });
-    print("sequence-7");
+      _outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
+      _probabilityProcessor =
+          TensorProcessorBuilder().add(postProcessNormalizeOp).build();
+    } catch (e) {
+      print('Unable to create interpreter, Caught Exception: ${e.toString()}');
+    }
   }
 
   Future<void> loadLabels() async {

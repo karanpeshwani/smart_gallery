@@ -34,15 +34,13 @@ class GalleryClass extends ChangeNotifier {
   }
 
   Future<Category?> _predict(
-      AssetEntity asset, SharedPreferencesClass sharedPreferencesClass) async {
+      AssetEntity asset) async {
     Category? category =
         sharedPreferencesClass.getPrediction(assetID: asset.id);
     if (category != null) {
       return category;
     }
 
-    // var file = await PhotoGallery.getFile(
-    //     mediumId: medium.id, mediumType: MediumType.image, mimeType: null);
     Uint8List? bytes = await asset.originBytes;
 
     img.Image? imageInput = img.decodeImage(bytes!);
@@ -59,7 +57,7 @@ class GalleryClass extends ChangeNotifier {
     for (var album in _gallery) {
       for (var asset in album) {
         if (!sharedPreferencesClass.savedPredictionsMap.containsKey(asset.id)) {
-          Category? category = await _predict(asset, sharedPreferencesClass);
+          Category? category = await _predict(asset);
           sharedPreferencesClass.savedPredictionsMap
               .putIfAbsent(asset.id, () => category!);
           if (sharedPreferencesClass
@@ -81,7 +79,7 @@ class GalleryClass extends ChangeNotifier {
   Future<Category?> classifyAsset(AssetEntity asset) async {
     // if model and shared predictions are loaded
     if (!sharedPreferencesClass.savedPredictionsMap.containsKey(asset.id)) {
-      Category? category = await _predict(asset, sharedPreferencesClass);
+      Category? category = await _predict(asset);
       sharedPreferencesClass.savedPredictionsMap
           .putIfAbsent(asset.id, () => category!);
       return category;
@@ -90,8 +88,7 @@ class GalleryClass extends ChangeNotifier {
   }
 
   // Future<List<String>> deleteAsset(List<AssetEntity> deleteAssetList) async {
-  Future<void> deleteAsset(
-      List<AssetEntity> deleteAssetList, int albumIndex) async {
+  Future<void> deleteAsset(List<AssetEntity> deleteAssetList, int albumIndex) async {
     final deleteSet = HashSet<String>();
     for (var asset in deleteAssetList) {
       deleteSet.add(asset.id);
