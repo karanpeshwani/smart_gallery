@@ -34,6 +34,7 @@ class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
           // title: Text(widget.classifiedAlbum.name ?? "Unnamed Album"),
           title: const Text("Unnamed Album"),
         ),
+        /*
         body: GridView.count(
           crossAxisCount: 3,
           mainAxisSpacing: 1.0,
@@ -47,6 +48,19 @@ class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
                   assetIndex: assetIndex)
           ],
         ),
+        */
+        body: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 5.0,
+              crossAxisSpacing: 5.0,
+            ),
+            itemCount: classifiedAlbum.getAssetSet().length,
+            itemBuilder: (BuildContext context, int assetIndex) {
+              return EachClassifiedImageWidget(
+                  classifiedAlbumIndex: widget.classifiedAlbumIndex,
+                  assetIndex: assetIndex);
+            }),
       ),
     );
   }

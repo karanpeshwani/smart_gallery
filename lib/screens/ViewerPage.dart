@@ -68,7 +68,11 @@ class ViewerPageState extends State<ViewerPage> {
                   SizedBox(
                     height: (MediaQuery.of(context).size.height -
                         2 * appBarHeight -
-                        MediaQuery.of(context).padding.top),
+                        MediaQuery.of(context).padding.top -
+                        2*paddingHeight -
+                        2 * textHeight),
+
+                    /*
                     child: Column(
                       children: [
                         Container(
@@ -92,6 +96,33 @@ class ViewerPageState extends State<ViewerPage> {
                         ),
                       ],
                     ),
+                    */
+
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Image.memory(widget.bytes),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: paddingHeight,
+                  ),
+                  SizedBox(
+                    height: textHeight,
+                    child: Text(
+                      category.label,
+                      style: const TextStyle(
+                          fontSize: 23, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  SizedBox(
+                    height: textHeight,
+                    child: Text(
+                      'Confidence: ${category.score.toStringAsFixed(3)}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: paddingHeight,
                   ),
                   AppBar(
                     actions: const [

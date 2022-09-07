@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/ClassifierClass.dart';
 import '../models/GalleryClass.dart';
 import 'AlbumPage.dart';
-import './ClassifiedHomePage.dart';
+import '../constants/Heights.dart';
+import '../screens/ClassifiedHomePage.dart';
 
 class HomePage extends StatelessWidget {
   final Classifier classifier;
@@ -15,36 +16,46 @@ class HomePage extends StatelessWidget {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final List<List<AssetEntity>> gallery = galleryClass.getGallery();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double gridWidth = (constraints.maxWidth - 20) / 3;
-        double gridHeight = gridWidth + 33;
-        double ratio = gridWidth / gridHeight;
-        return Container(
-          padding: const EdgeInsets.all(5),
-          child: GridView.count(
-            childAspectRatio: ratio,
-            crossAxisCount: 3,
-            mainAxisSpacing: 5.0,
-            crossAxisSpacing: 5.0,
-            children: <Widget>[
-              for (int albumIndex = 0;
-                  albumIndex < gallery.length;
-                  albumIndex++)
-                EachAlbumWidget(
-                    classifier: classifier,
-                    gridWidth: gridWidth,
-                    albumIndex: albumIndex),
-              ElevatedButton(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => ClassifiedHomePage(
-                            classifier: classifier,
-                          ))),
-                  child: const Text("ML")),
-            ],
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: (MediaQuery.of(context).size.height -
+              appBarHeight -
+              MediaQuery.of(context).padding.top -
+              intelligentClassificationBarHeight -
+              24),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              double gridWidth = (constraints.maxWidth - 20) / 3;
+              double gridHeight = gridWidth + 33;
+              double ratio = gridWidth / gridHeight;
+              return GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: ratio,
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 5.0,
+                    crossAxisSpacing: 5.0,
+                  ),
+                  itemCount: gallery.length,
+                  itemBuilder: (BuildContext context, int albumIndex) {
+                    return EachAlbumWidget(
+                        classifier: classifier,
+                        gridWidth: gridWidth,
+                        albumIndex: albumIndex);
+                  });
+            },
           ),
-        );
-      },
+        ),
+        SizedBox(
+          height: intelligentClassificationBarHeight,
+          child: ElevatedButton(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ClassifiedHomePage(
+                        classifier: classifier,
+                      ))),
+              child: const Text("ML")),
+        ),
+      ],
     );
   }
 }
@@ -90,7 +101,7 @@ class EachAlbumWidget extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.topLeft,
-              padding: const EdgeInsets.only(left: 2.0),
+              // padding: const EdgeInsets.only(left: 2.0),
               child: Text(
                 albumNameList.elementAt(albumIndex),
                 maxLines: 1,
@@ -103,7 +114,7 @@ class EachAlbumWidget extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.topLeft,
-              padding: const EdgeInsets.only(left: 2.0),
+              // padding: const EdgeInsets.only(left: 2.0),
               child: Text(
                 gallery.elementAt(albumIndex).length.toString(),
                 textAlign: TextAlign.start,

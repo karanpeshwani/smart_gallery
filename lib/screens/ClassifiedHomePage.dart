@@ -40,6 +40,8 @@ class ClassifiedHomePageState extends State<ClassifiedHomePage> {
               double ratio = gridWidth / gridHeight;
               return Container(
                 padding: const EdgeInsets.all(5),
+
+                /*
                 child: GridView.count(
                   childAspectRatio: ratio,
                   crossAxisCount: 3,
@@ -54,6 +56,22 @@ class ClassifiedHomePageState extends State<ClassifiedHomePage> {
                           classifiedAlbumIndex: classifiedAlbumIndex)
                   ],
                 ),
+                */
+
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 5.0,
+                      crossAxisSpacing: 5.0,
+                      childAspectRatio: ratio,
+                    ),
+                    itemCount: classifiedAlbumSet.length,
+                    itemBuilder:
+                        (BuildContext context, int classifiedAlbumIndex) {
+                      return EachClassifiedAlbumWidget(
+                          gridWidth: gridWidth,
+                          classifiedAlbumIndex: classifiedAlbumIndex);
+                    }),
               );
             },
           )),

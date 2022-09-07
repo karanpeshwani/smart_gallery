@@ -9,7 +9,6 @@ import '../constants/Icons.dart' as icons;
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 
 class AlbumPage extends StatefulWidget {
-
   final int albumIndex;
   Classifier classifier;
   AlbumPage(this.albumIndex, this.classifier, {Key? key}) : super(key: key);
@@ -62,6 +61,7 @@ class AlbumPageState extends State<AlbumPage> {
                 ],
                 title: Text(albumNameList.elementAt(widget.albumIndex)),
               ),
+              /*
               body: GridView.count(
                       crossAxisCount: 3,
                       mainAxisSpacing: 1.0,
@@ -74,6 +74,18 @@ class AlbumPageState extends State<AlbumPage> {
                               widget.albumIndex, assetIndex, widget.classifier),
                       ],
                     ),
+              */
+
+              body: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 5.0,
+                    crossAxisSpacing: 5.0,
+                  ),
+                  itemCount: gallery.elementAt(widget.albumIndex).length,
+                  itemBuilder: (BuildContext context, int assetIndex) {
+                    return EachImageWidget(widget.albumIndex, assetIndex, widget.classifier);
+                  }),
             ),
           )
         : MaterialApp(
@@ -102,78 +114,79 @@ class AlbumPageState extends State<AlbumPage> {
                 title: Text(albumNameList.elementAt(widget.albumIndex)),
               ),
               body: Column(
-                      children: [
-                        SizedBox(
-                          height: (MediaQuery.of(context).size.height -
-                              2 * appBarHeight -
-                              MediaQuery.of(context).padding.top),
-                          child: MultiSelectCheckList(
-                            maxSelectableCount: 100,
-                            textStyles: const MultiSelectTextStyles(
-                                selectedTextStyle: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold)),
-                            itemsDecoration: MultiSelectDecorations(
-                                selectedDecoration: BoxDecoration(
-                                    color: Colors.indigo.withOpacity(0.8))),
+                children: [
+                  SizedBox(
+                    height: (MediaQuery.of(context).size.height -
+                        2 * appBarHeight -
+                        MediaQuery.of(context).padding.top),
+                    child: MultiSelectCheckList(
+                      maxSelectableCount: 100,
+                      textStyles: const MultiSelectTextStyles(
+                          selectedTextStyle: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                      itemsDecoration: MultiSelectDecorations(
+                          selectedDecoration: BoxDecoration(
+                              color: Colors.indigo.withOpacity(0.8))),
 
-                            listViewSettings: ListViewSettings(
-                                separatorBuilder: (context, index) =>
-                                    const Divider(
-                                      height: 0,
-                                    )),
+                      listViewSettings: ListViewSettings(
+                          separatorBuilder: (context, index) => const Divider(
+                                height: 0,
+                              )),
 
-                            controller: _controller,
+                      controller: _controller,
 
-                            items: [
-                              for (int assetIndex = 0;
-                                  assetIndex < album.length;
-                                  assetIndex++)
-                                CheckListCard(
-
-                                  value: album.elementAt(assetIndex),
-                                  title: EachImageWidget(widget.albumIndex,
-                                      assetIndex, widget.classifier),
-                                  subtitle: const Text("karan"),
-                                  selectedColor: Colors.white,
-                                  checkColor: Colors.indigo,
-                                  checkBoxBorderSide:
-                                      const BorderSide(color: Colors.blue),
-                                )
-                            ],
-
-                            onChange: (allSelectedItems, selectedItem) {},
-                            //
-                          ),
-                        ),
-                        AppBar(
-                          actions: [
-                            TextButton.icon(
-                              onPressed: (() async{      // if we put async here, it will give error
-                                selectIsOff = true;
-                                await galleryClass.deleteAsset(
-                                    _controller.getSelectedItems(),widget.albumIndex);
-                              }),
-                              icon: const Icon(
-                                icons.deleteIcon,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                size: 25,
-                                semanticLabel:
-                                    'Text to announce in accessibility modes',
-                              ),
-                              label: Container(),
-                            ),
-                          ],
-                        ),
+                      items: [
+                        for (int assetIndex = 0;
+                            assetIndex < album.length;
+                            assetIndex++)
+                          CheckListCard(
+                            value: album.elementAt(assetIndex),
+                            title: EachImageWidget(widget.albumIndex,
+                                assetIndex, widget.classifier),
+                            subtitle: const Text("karan"),
+                            selectedColor: Colors.white,
+                            checkColor: Colors.indigo,
+                            checkBoxBorderSide:
+                                const BorderSide(color: Colors.blue),
+                          )
                       ],
+
+                      onChange: (allSelectedItems, selectedItem) {},
+                      //
                     ),
+                  ),
+                  AppBar(
+                    actions: [
+                      TextButton.icon(
+                        onPressed: (() async {
+                          // if we put async here, it will give error
+                          selectIsOff = true;
+                          await galleryClass.deleteAsset(
+                              _controller.getSelectedItems(),
+                              widget.albumIndex);
+                        }),
+                        icon: const Icon(
+                          icons.deleteIcon,
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          size: 25,
+                          semanticLabel:
+                              'Text to announce in accessibility modes',
+                        ),
+                        label: Container(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
   }
 }
 
 class EachImageWidget extends StatelessWidget {
-  const EachImageWidget(this.albumIndex,this.assetIndex, this.classifier, {Key? key})
+  const EachImageWidget(this.albumIndex, this.assetIndex, this.classifier,
+      {Key? key})
       : super(key: key);
 
   // final AlbumPage widget;
@@ -189,7 +202,7 @@ class EachImageWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
           builder: (context) =>
-              ViewerPage(albumIndex: albumIndex,assetIndex: assetIndex))),
+              ViewerPage(albumIndex: albumIndex, assetIndex: assetIndex))),
       child: Container(
         color: Colors.grey[300],
         child: AssetEntityImage(
