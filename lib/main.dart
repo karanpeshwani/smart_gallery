@@ -1,37 +1,32 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:photo_gallery/photo_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_gallery_flutter_app/models/classifier_float.dart';
 import './models/ClassifierClass.dart';
 import 'screens/HomePage.dart';
 import 'models/GalleryClass.dart';
-import './models/classifier_quant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './models/SharedPreferencesClass.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:photo_manager/photo_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  print("start");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(_MyApp());
+  runApp(const _MyApp());
 }
 
 class _MyApp extends StatefulWidget {
-  // Classifier classifier = ClassifierQuant();
-  _MyApp({Key? key}) : super(key: key);
+  const _MyApp({Key? key}) : super(key: key);
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
-  GalleryClass _galleryClass = GalleryClass();
+  final GalleryClass _galleryClass = GalleryClass();
   late SharedPreferencesClass sharedPreferencesClass;
   late dynamic prefs;
   final Classifier classifier = ClassifierFloat();
@@ -44,7 +39,6 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
   Future<void> initAsync() async {
     if (await _promptPermissionSetting()) {
-      print("2");
 
       await _galleryClass.setUpGallery();
 
@@ -92,8 +86,6 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    print("hola");
-
 
     return MultiProvider(
       providers: [

@@ -44,7 +44,6 @@ class GalleryClass extends ChangeNotifier {
     Uint8List? bytes = await asset.originBytes;
 
     img.Image? imageInput = img.decodeImage(bytes!);
-    print("kkkkkkkkkkkkkkkkkkkkkkkkk-000000000000000");
     var pred = classifier.predict(imageInput!);
 
     sharedPreferencesClass.savePediction(
@@ -130,8 +129,7 @@ class GalleryClass extends ChangeNotifier {
     for (var asset in deleteAssetList) {
       lis.add(asset.id);
     }
-    List<String> result = await PhotoManager.editor.deleteWithIds(lis);
-
+    await PhotoManager.editor.deleteWithIds(lis);
     return;
   }
 

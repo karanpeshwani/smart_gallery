@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:collection';
-import 'package:flutter/cupertino.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class ClassifiedAlbum {
@@ -26,9 +28,7 @@ class ClassifiedAlbum {
   }
 
   AssetEntity getThumbnail() {
-    // if (_assetSet.isEmpty) {
-    //   return null;
-    // }
+    // if not null
     return _assetSet.elementAt(0);
   }
 

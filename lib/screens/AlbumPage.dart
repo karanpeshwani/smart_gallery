@@ -12,7 +12,6 @@ class AlbumPage extends StatefulWidget {
 
   final int albumIndex;
   Classifier classifier;
-  bool doneOnes = false;
   AlbumPage(this.albumIndex, this.classifier, {Key? key}) : super(key: key);
 
   @override

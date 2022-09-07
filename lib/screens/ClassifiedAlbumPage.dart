@@ -8,14 +8,14 @@ import './ClassifiedViewPage.dart';
 
 class ClassifiedAlbumPage extends StatefulWidget {
   final int classifiedAlbumIndex;
-  ClassifiedAlbumPage({required this.classifiedAlbumIndex});
+  const ClassifiedAlbumPage({Key? key, required this.classifiedAlbumIndex})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => ClassifiedAlbumPageState();
 }
 
 class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
-
   @override
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
@@ -57,7 +57,6 @@ class EachClassifiedImageWidget extends StatelessWidget {
       {Key? key, required this.classifiedAlbumIndex, required this.assetIndex})
       : super(key: key);
 
-  // final AlbumPage widget;
   final int assetIndex;
   final int classifiedAlbumIndex;
   @override

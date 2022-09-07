@@ -11,7 +11,8 @@ class ViewerPage extends StatefulWidget {
   final int assetIndex;
   final int albumIndex;
   Uint8List bytes = Uint8List.fromList([]);
-  ViewerPage({required this.albumIndex, required this.assetIndex});
+  ViewerPage({Key? key, required this.albumIndex, required this.assetIndex})
+      : super(key: key);
   @override
   ViewerPageState createState() => ViewerPageState();
 }
@@ -43,7 +44,6 @@ class ViewerPageState extends State<ViewerPage> {
 
     if (widget.bytes.isEmpty) {
       processAsset(asset, galleryClass);
-      // getCategory(asset, galleryClass);
     }
 
     DateTime date =

@@ -13,16 +13,12 @@ class ClassifiedHomePage extends StatefulWidget {
   ClassifiedHomePage({Key? key, required this.classifier}) : super(key: key);
 
   @override
-  _ClassifiedHomePageState createState() => _ClassifiedHomePageState();
+  ClassifiedHomePageState createState() => ClassifiedHomePageState();
 }
 
-class _ClassifiedHomePageState extends State<ClassifiedHomePage> {
-  // const EachAlbumWidget({Key? key}) : super(key: key);
-  bool _loading = true;
-
+class ClassifiedHomePageState extends State<ClassifiedHomePage> {
   @override
   Widget build(BuildContext context) {
-    // final sharedPreferencesClass = Provider.of<SharedPreferencesClass>(context, listen: true);
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final HashMap<String, ClassifiedAlbum> classifiedAlbumSet =
         galleryClass.sharedPreferencesClass.getSavedClassifiedAlbumsSet();
@@ -69,12 +65,11 @@ class EachClassifiedAlbumWidget extends StatelessWidget {
   final double gridWidth;
   final int classifiedAlbumIndex;
 
-  EachClassifiedAlbumWidget({Key? key, 
+  const EachClassifiedAlbumWidget({
+    Key? key,
     required this.gridWidth,
     required this.classifiedAlbumIndex,
-  }) : super(key: key) {
-    print("order check - 2");
-  }
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

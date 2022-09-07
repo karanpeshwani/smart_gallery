@@ -8,12 +8,12 @@ import './ClassifiedHomePage.dart';
 
 class HomePage extends StatelessWidget {
   final Classifier classifier;
-  HomePage(this.classifier, {Key? key}) : super(key: key);
+  const HomePage(this.classifier, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
-    final List<List<AssetEntity>> _gallery = galleryClass.getGallery();
+    final List<List<AssetEntity>> gallery = galleryClass.getGallery();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
             crossAxisSpacing: 5.0,
             children: <Widget>[
               for (int albumIndex = 0;
-                  albumIndex < _gallery.length;
+                  albumIndex < gallery.length;
                   albumIndex++)
                 EachAlbumWidget(
                     classifier: classifier,
@@ -54,7 +54,7 @@ class EachAlbumWidget extends StatelessWidget {
   final double gridWidth;
   final int albumIndex;
 
-  EachAlbumWidget({
+  const EachAlbumWidget({
     Key? key,
     required this.classifier,
     required this.gridWidth,
@@ -64,11 +64,10 @@ class EachAlbumWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
-    final _gallery = galleryClass.getGallery();
+    final gallery = galleryClass.getGallery();
     final albumNameList = galleryClass.getAlbumNameList();
     final thumbnailList = galleryClass.getAlbumThumbnails();
 
-    print("Home page build function running");
     return GestureDetector(
         onTap: () => Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AlbumPage(albumIndex, classifier))),
@@ -106,7 +105,7 @@ class EachAlbumWidget extends StatelessWidget {
               alignment: Alignment.topLeft,
               padding: const EdgeInsets.only(left: 2.0),
               child: Text(
-                _gallery.elementAt(albumIndex).length.toString(),
+                gallery.elementAt(albumIndex).length.toString(),
                 textAlign: TextAlign.start,
                 style: const TextStyle(
                   height: 1.2,

@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../models/GalleryClass.dart';
 import 'package:smart_gallery_flutter_app/models/SharedPreferencesClass.dart'
     as spc;
-
 import '../models/SharedPreferencesClass.dart';
 
 class ClassifiedViewerPage extends StatefulWidget {
@@ -19,10 +18,10 @@ class ClassifiedViewerPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ClassifiedViewerPageState createState() => _ClassifiedViewerPageState();
+  ClassifiedViewerPageState createState() => ClassifiedViewerPageState();
 }
 
-class _ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
+class ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
   spc.Category category = spc.Category(label: "No Label", score: 0);
   bool _loading = true;
 
