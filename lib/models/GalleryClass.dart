@@ -33,8 +33,7 @@ class GalleryClass extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Category?> _predict(
-      AssetEntity asset) async {
+  Future<Category?> _predict(AssetEntity asset) async {
     Category? category =
         sharedPreferencesClass.getPrediction(assetID: asset.id);
     if (category != null) {
@@ -87,21 +86,35 @@ class GalleryClass extends ChangeNotifier {
   }
 
   // Future<List<String>> deleteAsset(List<AssetEntity> deleteAssetList) async {
-  Future<void> deleteAsset(List<AssetEntity> deleteAssetList, int albumIndex) async {
+  Future<void> deleteAsset(
+      List<AssetEntity> deleteAssetList, int albumIndex) async {
     final deleteSet = HashSet<String>();
     for (var asset in deleteAssetList) {
       deleteSet.add(asset.id);
     }
-    List<AssetEntity> newAlbum = [];
 
-    for (var asset in _gallery.elementAt(albumIndex)) {
-      if (deleteSet.contains(asset.id)) {
-        continue;
+    List<AssetEntity> newAlbum = [];
+    if (albumIndex != 0) {
+      for (var asset in _gallery.elementAt(albumIndex)) {
+        if (deleteSet.contains(asset.id)) {
+          continue;
+        }
+        newAlbum.add(asset);
       }
-      newAlbum.add(asset);
+      _gallery[albumIndex] = newAlbum;
+      _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+    } else {
+      for (albumIndex = 1; albumIndex < _gallery.length; albumIndex++) {
+        for (var asset in _gallery.elementAt(albumIndex)) {
+          if (deleteSet.contains(asset.id)) {
+            continue;
+          }
+          newAlbum.add(asset);
+        }
+        _gallery[albumIndex] = newAlbum;
+        _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+      }
     }
-    _gallery[albumIndex] = newAlbum;
-    _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
 
     albumIndex = 0;
     newAlbum = [];

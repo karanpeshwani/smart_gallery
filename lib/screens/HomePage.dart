@@ -20,10 +20,9 @@ class HomePage extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           height: (MediaQuery.of(context).size.height -
+              topPaddingHeight -
               appBarHeight -
-              MediaQuery.of(context).padding.top -
-              intelligentClassificationBarHeight -
-              24),
+              intelligentClassificationBarHeight),
           child: LayoutBuilder(
             builder: (context, constraints) {
               double gridWidth = (constraints.maxWidth - 20) / 3;

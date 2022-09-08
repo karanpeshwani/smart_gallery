@@ -69,35 +69,8 @@ class ViewerPageState extends State<ViewerPage> {
                     height: (MediaQuery.of(context).size.height -
                         2 * appBarHeight -
                         MediaQuery.of(context).padding.top -
-                        2*paddingHeight -
+                        2 * paddingHeight -
                         2 * textHeight),
-
-                    /*
-                    child: Column(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          child: Image.memory(widget.bytes),
-                        ),
-                        const SizedBox(
-                          height: 36,
-                        ),
-                        Text(
-                          category.label,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          'Confidence: ${category.score.toStringAsFixed(3)}',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
-                    */
-
                     child: Container(
                       alignment: Alignment.center,
                       child: Image.memory(widget.bytes),
