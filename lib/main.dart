@@ -47,15 +47,12 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
       prefs = await SharedPreferences.getInstance();
 
-      await classifier.loadModel();
-
-      _galleryClass.setClassifier(classifier);
       sharedPreferencesClass = SharedPreferencesClass(
           prefs.getString('saved_predictions_map_as_string'),
           prefs.getString('saved_classified_albums_set_as_string'));
-
       _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
-
+      await classifier.loadModel();
+      _galleryClass.setClassifier(classifier);
       _galleryClass.classifyAllAssets();
     }
   }

@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
+import '../constants/Heights.dart';
 import '../models/GalleryClass.dart';
 import '../models/SharedPreferencesClass.dart';
 import './ClassifiedViewPage.dart';
@@ -27,40 +28,39 @@ class ClassifiedAlbumPageState extends State<ClassifiedAlbumPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 49, 45, 63),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          // title: Text(widget.classifiedAlbum.name ?? "Unnamed Album"),
-          title: const Text("Unnamed Album"),
+          title: Text(classifiedAlbum.getName()),
         ),
-        /*
-        body: GridView.count(
-          crossAxisCount: 3,
-          mainAxisSpacing: 1.0,
-          crossAxisSpacing: 1.0,
+        body: Column(
           children: <Widget>[
-            for (int assetIndex = 0;
-                assetIndex < classifiedAlbum.getAssetSet().length;
-                assetIndex++)
-              EachClassifiedImageWidget(
-                  classifiedAlbumIndex: widget.classifiedAlbumIndex,
-                  assetIndex: assetIndex)
+            const SizedBox(
+              height: paddingHeight,
+            ),
+            SizedBox(
+              height:  MediaQuery.of(context).size.height -
+                        appBarHeight -
+                        MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom -
+                        paddingHeight,
+              child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 5.0,
+                    crossAxisSpacing: 5.0,
+                  ),
+                  itemCount: classifiedAlbum.getAssetSet().length,
+                  itemBuilder: (BuildContext context, int assetIndex) {
+                    return EachClassifiedImageWidget(
+                        classifiedAlbumIndex: widget.classifiedAlbumIndex,
+                        assetIndex: assetIndex);
+                  }),
+            ),
           ],
         ),
-        */
-        body: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 5.0,
-              crossAxisSpacing: 5.0,
-            ),
-            itemCount: classifiedAlbum.getAssetSet().length,
-            itemBuilder: (BuildContext context, int assetIndex) {
-              return EachClassifiedImageWidget(
-                  classifiedAlbumIndex: widget.classifiedAlbumIndex,
-                  assetIndex: assetIndex);
-            }),
       ),
     );
   }

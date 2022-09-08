@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
+import '../constants/Heights.dart';
 import '../models/ClassifierClass.dart';
 import '../models/GalleryClass.dart';
 import '../screens/ClassifiedAlbumPage.dart';
@@ -26,54 +27,51 @@ class ClassifiedHomePageState extends State<ClassifiedHomePage> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 49, 45, 63),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            // title: Text(widget.classifiedAlbum.name ?? "Unnamed Album"),
-            title: const Text("Unnamed Album"),
+            title: const Text("Classified Albums"),
           ),
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              double gridWidth = (constraints.maxWidth - 20) / 3;
-              double gridHeight = gridWidth + 33;
-              double ratio = gridWidth / gridHeight;
-              return Container(
-                padding: const EdgeInsets.all(5),
-
-                /*
-                child: GridView.count(
-                  childAspectRatio: ratio,
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 5.0,
-                  crossAxisSpacing: 5.0,
-                  children: <Widget>[
-                    for (var classifiedAlbumIndex = 0;
-                        classifiedAlbumIndex < classifiedAlbumSet.length;
-                        classifiedAlbumIndex++)
-                      EachClassifiedAlbumWidget(
-                          gridWidth: gridWidth,
-                          classifiedAlbumIndex: classifiedAlbumIndex)
-                  ],
+          body: Column(
+            children: <Widget>[
+              const SizedBox(
+                height: paddingHeight,
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height -
+                    appBarHeight -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom -
+                    paddingHeight,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    double gridWidth = (constraints.maxWidth - 20) / 3;
+                    double gridHeight = gridWidth + 33;
+                    double ratio = gridWidth / gridHeight;
+                    return Container(
+                      padding: const EdgeInsets.all(5),
+                      child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            mainAxisSpacing: 5.0,
+                            crossAxisSpacing: 5.0,
+                            childAspectRatio: ratio,
+                          ),
+                          itemCount: classifiedAlbumSet.length,
+                          itemBuilder:
+                              (BuildContext context, int classifiedAlbumIndex) {
+                            return EachClassifiedAlbumWidget(
+                                gridWidth: gridWidth,
+                                classifiedAlbumIndex: classifiedAlbumIndex);
+                          }),
+                    );
+                  },
                 ),
-                */
-
-                child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 5.0,
-                      crossAxisSpacing: 5.0,
-                      childAspectRatio: ratio,
-                    ),
-                    itemCount: classifiedAlbumSet.length,
-                    itemBuilder:
-                        (BuildContext context, int classifiedAlbumIndex) {
-                      return EachClassifiedAlbumWidget(
-                          gridWidth: gridWidth,
-                          classifiedAlbumIndex: classifiedAlbumIndex);
-                    }),
-              );
-            },
+              ),
+            ],
           )),
     );
   }

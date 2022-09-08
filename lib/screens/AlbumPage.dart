@@ -35,6 +35,7 @@ class AlbumPageState extends State<AlbumPage> {
         ? MaterialApp(
             home: Scaffold(
               appBar: AppBar(
+                backgroundColor: const Color.fromARGB(255, 49, 45, 63),
                 leading: IconButton(
                   icon: const Icon(icons.backArrowIcon),
                   onPressed: () => Navigator.of(context).pop(),
@@ -61,36 +62,38 @@ class AlbumPageState extends State<AlbumPage> {
                 ],
                 title: Text(albumNameList.elementAt(widget.albumIndex)),
               ),
-              /*
-              body: GridView.count(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 1.0,
-                      crossAxisSpacing: 1.0,
-                      children: <Widget>[
-                        for (int assetIndex = 0;
-                            assetIndex < album.length;
-                            assetIndex++)
-                          EachImageWidget(
-                              widget.albumIndex, assetIndex, widget.classifier),
-                      ],
-                    ),
-              */
-
-              body: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 5.0,
-                    crossAxisSpacing: 5.0,
+              body: Column(
+                children: [
+                  const SizedBox(
+                    height: paddingHeight,
                   ),
-                  itemCount: gallery.elementAt(widget.albumIndex).length,
-                  itemBuilder: (BuildContext context, int assetIndex) {
-                    return EachImageWidget(widget.albumIndex, assetIndex, widget.classifier);
-                  }),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height -
+                        appBarHeight -
+                        MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom -
+                        paddingHeight,
+                    child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 5.0,
+                          crossAxisSpacing: 5.0,
+                        ),
+                        itemCount: gallery.elementAt(widget.albumIndex).length,
+                        itemBuilder: (BuildContext context, int assetIndex) {
+                          return EachImageWidget(
+                              widget.albumIndex, assetIndex, widget.classifier);
+                        }),
+                  ),
+                ],
+              ),
             ),
           )
         : MaterialApp(
             home: Scaffold(
               appBar: AppBar(
+                backgroundColor: const Color.fromARGB(255, 49, 45, 63),
                 leading: IconButton(
                   icon: const Icon(icons.backArrowIcon),
                   onPressed: () => Navigator.of(context).pop(),
@@ -157,23 +160,31 @@ class AlbumPageState extends State<AlbumPage> {
                     ),
                   ),
                   AppBar(
+                    backgroundColor: const Color.fromARGB(255, 49, 45, 63),
                     actions: [
-                      TextButton.icon(
-                        onPressed: (() async {
-                          // if we put async here, it will give error
-                          selectIsOff = true;
-                          await galleryClass.deleteAsset(
-                              _controller.getSelectedItems(),
-                              widget.albumIndex);
-                        }),
-                        icon: const Icon(
-                          icons.deleteIcon,
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          size: 25,
-                          semanticLabel:
-                              'Text to announce in accessibility modes',
+                      Container(
+                        // color: Color.fromARGB(255, 90, 9, 251),
+                        width: MediaQuery.of(context).size.width,
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: 54,
+                          child: TextButton.icon(
+                            onPressed: (() async {
+                              selectIsOff = true;
+                              await galleryClass.deleteAsset(
+                                  _controller.getSelectedItems(),
+                                  widget.albumIndex);
+                            }),
+                            icon: const Icon(
+                              icons.deleteIcon,
+                              color: Color.fromARGB(255, 226, 14, 14),
+                              size: 30,
+                              semanticLabel:
+                                  'Text to announce in accessibility modes',
+                            ),
+                            label: Container(),
+                          ),
                         ),
-                        label: Container(),
                       ),
                     ],
                   ),

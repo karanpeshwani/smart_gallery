@@ -18,16 +18,20 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromRGBO(49, 45, 63, 1),
           title: const Text('Photo gallery'),
         ),
         body: Column(
           children: <Widget>[
+            const SizedBox(
+              height: paddingHeight,
+            ),
             SizedBox(
               height: (MediaQuery.of(context).size.height -
                   MediaQuery.of(context).padding.top -
                   MediaQuery.of(context).padding.bottom -
                   appBarHeight -
-                  4 * paddingHeight -
+                  5 * paddingHeight -
                   intelligentClassificationBarHeight),
               child: LayoutBuilder(
                 builder: (context, constraints) {
@@ -57,6 +61,9 @@ class HomePage extends StatelessWidget {
             SizedBox(
               height: intelligentClassificationBarHeight,
               child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.teal, // This is what you need!
+                  ),
                   onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => ClassifiedHomePage(
                             classifier: classifier,
@@ -118,7 +125,6 @@ class EachAlbumWidget extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.topLeft,
-              // padding: const EdgeInsets.only(left: 2.0),
               child: Text(
                 albumNameList.elementAt(albumIndex),
                 maxLines: 1,
@@ -131,7 +137,6 @@ class EachAlbumWidget extends StatelessWidget {
             ),
             Container(
               alignment: Alignment.topLeft,
-              // padding: const EdgeInsets.only(left: 2.0),
               child: Text(
                 gallery.elementAt(albumIndex).length.toString(),
                 textAlign: TextAlign.start,

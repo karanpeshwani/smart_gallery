@@ -76,7 +76,6 @@ abstract class Classifier {
         .process(_inputImage);
   }
 
-  // Category predict(Image image) {
   Category predict(Image image) {
     _inputImage = TensorImage(_inputType);
     _inputImage.loadImage(image);

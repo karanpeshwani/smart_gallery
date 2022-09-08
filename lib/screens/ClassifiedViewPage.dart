@@ -62,6 +62,7 @@ class ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 49, 45, 63),
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_ios),

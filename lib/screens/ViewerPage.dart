@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../constants/Heights.dart';
 import '../models/GalleryClass.dart';
+import '../constants/Icons.dart' as icons;
 
 class ViewerPage extends StatefulWidget {
   final int assetIndex;
@@ -53,6 +54,7 @@ class ViewerPageState extends State<ViewerPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 49, 45, 63),
           leading: IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.arrow_back_ios),
@@ -97,11 +99,6 @@ class ViewerPageState extends State<ViewerPage> {
                   ),
                   const SizedBox(
                     height: paddingHeight,
-                  ),
-                  AppBar(
-                    actions: const [
-                      Text("hello"),
-                    ],
                   ),
                 ],
               ),

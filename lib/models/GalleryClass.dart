@@ -85,7 +85,6 @@ class GalleryClass extends ChangeNotifier {
     return sharedPreferencesClass.savedPredictionsMap[asset.id];
   }
 
-  // Future<List<String>> deleteAsset(List<AssetEntity> deleteAssetList) async {
   Future<void> deleteAsset(
       List<AssetEntity> deleteAssetList, int albumIndex) async {
     final deleteSet = HashSet<String>();
@@ -101,8 +100,13 @@ class GalleryClass extends ChangeNotifier {
         }
         newAlbum.add(asset);
       }
-      _gallery[albumIndex] = newAlbum;
-      _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+      if (newAlbum.isEmpty) {
+        _gallery.removeAt(albumIndex);
+        _albumThumbnailList.removeAt(albumIndex);
+      } else {
+        _gallery[albumIndex] = newAlbum;
+        _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+      }
     } else {
       for (albumIndex = 1; albumIndex < _gallery.length; albumIndex++) {
         for (var asset in _gallery.elementAt(albumIndex)) {
@@ -111,8 +115,13 @@ class GalleryClass extends ChangeNotifier {
           }
           newAlbum.add(asset);
         }
-        _gallery[albumIndex] = newAlbum;
-        _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+        if (newAlbum.isEmpty) {
+          _gallery.removeAt(albumIndex);
+          _albumThumbnailList.removeAt(albumIndex);
+        } else {
+          _gallery[albumIndex] = newAlbum;
+          _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+        }
       }
     }
 
@@ -124,8 +133,13 @@ class GalleryClass extends ChangeNotifier {
       }
       newAlbum.add(asset);
     }
-    _gallery[albumIndex] = newAlbum;
-    _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+    if (newAlbum.isEmpty) {
+      _gallery.removeAt(albumIndex);
+      _albumThumbnailList.removeAt(albumIndex);
+    } else {
+      _gallery[albumIndex] = newAlbum;
+      _albumThumbnailList[albumIndex] = newAlbum.elementAt(0);
+    }
 
     for (var asset in deleteAssetList) {
       String label =
@@ -133,6 +147,12 @@ class GalleryClass extends ChangeNotifier {
 
       (sharedPreferencesClass.savedClassifiedAlbumsSet[label])!
           .deleteAssetFromClassifiedAlbum(asset);
+
+      if (sharedPreferencesClass.savedClassifiedAlbumsSet[label]!
+              .getAssetCount() ==
+          0) {
+        sharedPreferencesClass.savedClassifiedAlbumsSet.remove(label);
+      }
 
       sharedPreferencesClass.savedPredictionsMap.remove(asset.id);
     }
