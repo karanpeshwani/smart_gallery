@@ -7,4 +7,3 @@ final appBarHeight = appbar.preferredSize.height;
 const double paddingHeight = 15;
 const double textHeight = 25;
 const double intelligentClassificationBarHeight = 40;
-const double topPaddingHeight = 24;

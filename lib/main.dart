@@ -39,12 +39,11 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
   Future<void> initAsync() async {
     if (await _promptPermissionSetting()) {
-
       await _galleryClass.setUpGallery();
 
       setState(() {
         _loading = false;
-      });  
+      });
 
       prefs = await SharedPreferences.getInstance();
 
@@ -55,7 +54,7 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
           prefs.getString('saved_predictions_map_as_string'),
           prefs.getString('saved_classified_albums_set_as_string'));
 
-       _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
+      _galleryClass.setSharedPreferencesClass(sharedPreferencesClass);
 
       _galleryClass.classifyAllAssets();
     }
@@ -86,22 +85,16 @@ class _MyAppState extends State<_MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => _galleryClass),
       ],
       child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Photo gallery'),
-          ),
-          body: _loading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : HomePage(classifier),
-        ),
+        home: _loading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : HomePage(classifier),
       ),
     );
   }

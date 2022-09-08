@@ -7,6 +7,7 @@ import '../models/GalleryClass.dart';
 import 'package:smart_gallery_flutter_app/models/SharedPreferencesClass.dart'
     as spc;
 import '../models/SharedPreferencesClass.dart';
+import '../constants/Heights.dart';
 
 class ClassifiedViewerPage extends StatefulWidget {
   final int classifiedAlbumIndex;
@@ -24,7 +25,6 @@ class ClassifiedViewerPage extends StatefulWidget {
 class ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
   spc.Category category = spc.Category(label: "No Label", score: 0);
   bool _loading = true;
-
 
   Future<void> processAsset(
       AssetEntity asset, GalleryClass galleryClass) async {
@@ -72,8 +72,11 @@ class ClassifiedViewerPageState extends State<ClassifiedViewerPage> {
             ? const Center(
                 child: CircularProgressIndicator(),
               )
-            : Container(
-                alignment: Alignment.center,
+            : SizedBox(
+                height: (MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom -
+                    appBarHeight),
                 child: Image.memory(widget.bytes),
               ),
         /*

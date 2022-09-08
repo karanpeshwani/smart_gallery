@@ -69,6 +69,7 @@ class ViewerPageState extends State<ViewerPage> {
                     height: (MediaQuery.of(context).size.height -
                         2 * appBarHeight -
                         MediaQuery.of(context).padding.top -
+                        MediaQuery.of(context).padding.bottom -
                         2 * paddingHeight -
                         2 * textHeight),
                     child: Container(

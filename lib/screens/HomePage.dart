@@ -16,46 +16,64 @@ class HomePage extends StatelessWidget {
     final galleryClass = Provider.of<GalleryClass>(context, listen: true);
     final List<List<AssetEntity>> gallery = galleryClass.getGallery();
 
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: (MediaQuery.of(context).size.height -
-              topPaddingHeight -
-              appBarHeight -
-              intelligentClassificationBarHeight),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              double gridWidth = (constraints.maxWidth - 20) / 3;
-              double gridHeight = gridWidth + 33;
-              double ratio = gridWidth / gridHeight;
-              return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: ratio,
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 5.0,
-                    crossAxisSpacing: 5.0,
-                  ),
-                  itemCount: gallery.length,
-                  itemBuilder: (BuildContext context, int albumIndex) {
-                    return EachAlbumWidget(
-                        classifier: classifier,
-                        gridWidth: gridWidth,
-                        albumIndex: albumIndex);
-                  });
-            },
-          ),
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Photo gallery'),
         ),
-        SizedBox(
-          height: intelligentClassificationBarHeight,
-          child: ElevatedButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ClassifiedHomePage(
-                        classifier: classifier,
-                      ))),
-              child: const Text("ML")),
-        ),
-      ],
-    );
+        body: Column(
+          children: <Widget>[
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                  MediaQuery.of(context).padding.top -
+                  MediaQuery.of(context).padding.bottom -
+                  appBarHeight -
+                  4 * paddingHeight -
+                  intelligentClassificationBarHeight),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  double gridWidth = (constraints.maxWidth - 20) / 3;
+                  double gridHeight = gridWidth + 33;
+                  double ratio = gridWidth / gridHeight;
+                  return GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: ratio,
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 5.0,
+                        crossAxisSpacing: 5.0,
+                      ),
+                      itemCount: gallery.length,
+                      itemBuilder: (BuildContext context, int albumIndex) {
+                        return EachAlbumWidget(
+                            classifier: classifier,
+                            gridWidth: gridWidth,
+                            albumIndex: albumIndex);
+                      });
+                },
+              ),
+            ),
+            const SizedBox(
+              height: paddingHeight,
+            ),
+            SizedBox(
+              height: intelligentClassificationBarHeight,
+              child: ElevatedButton(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => ClassifiedHomePage(
+                            classifier: classifier,
+                          ))),
+                  child: const Text("Intelligent Classification")),
+            ),
+            const SizedBox(
+              height: paddingHeight,
+            ),
+            const SizedBox(
+              height: paddingHeight,
+            ),
+            const SizedBox(
+              height: paddingHeight,
+            ),
+          ],
+        ));
   }
 }
 
