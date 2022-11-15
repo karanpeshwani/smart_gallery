@@ -1,4 +1,6 @@
-# A mobile gallery app that can sort local images into classified albums
+# Smart Gallery
+
+## A mobile gallery app that can sort local images into classified albums
 
 ### Project Demo Video [here](https://drive.google.com/file/d/1ivOYScZDrUpYIJBtR9PrFobU160ikOk_/view?usp=sharing)
 
